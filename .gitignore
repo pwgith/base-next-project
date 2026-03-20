@@ -1,0 +1,8 @@
+node_modules
+.next
+.env.local
+.vercel
+.env*.local
+dev-out.txt
+dev-err.txt
+ai-output

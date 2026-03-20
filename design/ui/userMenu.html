@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Menu — UI Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; max-height: 0; }
+      to   { opacity: 1; max-height: 400px; }
+    }
+    .animate-fade-in { animation: fadeIn 0.18s ease-out both; }
+    .animate-slide-down { animation: slideDown 0.22s ease-out both; overflow: hidden; }
+
+    /* Overlay backdrop */
+    #mobile-menu-overlay {
+      transition: opacity 0.2s ease;
+    }
+  </style>
+</head>
+<body class="font-['Inter',system-ui,-apple-system,sans-serif] min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex flex-col">
+
+  <!-- ======================================================
+       TOP NAV — authenticated state with hamburger + avatar
+       ====================================================== -->
+  <nav class="bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
+
+      <!-- Brand -->
+      <a href="landingPage.html" class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        Model Helper
+      </a>
+
+      <!-- Desktop: primary nav links (centre-left) -->
+      <div class="hidden sm:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <a href="#" class="text-blue-600 border-b-2 border-blue-600 pb-0.5">Home</a>
+        <a href="#" class="hover:text-slate-900 transition-colors">Plans</a>
+      </div>
+
+      <!-- Desktop: user avatar button + dropdown trigger -->
+      <div class="hidden sm:flex items-center relative" id="desktop-menu-wrapper">
+        <button
+          id="desktop-menu-btn"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="desktop-dropdown"
+          onclick="toggleDesktopMenu()"
+          class="flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+        >
+          <!-- Avatar initials -->
+          <span class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold select-none">
+            AL
+          </span>
+          <span class="hidden md:inline">alice@example.com</span>
+          <!-- Chevron -->
+          <svg id="desktop-chevron" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <!-- Desktop dropdown -->
+        <div
+          id="desktop-dropdown"
+          role="menu"
+          aria-labelledby="desktop-menu-btn"
+          class="hidden animate-fade-in absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5 z-50"
+        >
+          <!-- User info header -->
+          <div class="px-4 py-3 border-b border-slate-100">
+            <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">Signed in as</p>
+            <p class="text-sm font-semibold text-slate-800 truncate mt-0.5">alice@example.com</p>
+          </div>
+
+          <!-- Menu items -->
+          <a
+            href="profile.html"
+            role="menuitem"
+            class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors focus:outline-none focus:bg-slate-100"
+          >
+            <span class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </span>
+            <span class="font-medium">Profile</span>
+          </a>
+
+          <a
+            href="changePassword.html"
+            role="menuitem"
+            class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors focus:outline-none focus:bg-slate-100"
+          >
+            <span class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+            </span>
+            <span class="font-medium">Change Password</span>
+          </a>
+
+          <!-- Divider -->
+          <div class="border-t border-slate-100 my-1"></div>
+
+          <a
+            href="logout.html"
+            role="menuitem"
+            class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:bg-red-50"
+          >
+            <span class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+            </span>
+            <span class="font-medium">Sign Out</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile: hamburger button -->
+      <button
+        id="hamburger-btn"
+        aria-label="Open navigation menu"
+        aria-haspopup="true"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        onclick="toggleMobileMenu()"
+        class="sm:hidden flex items-center justify-center w-9 h-9 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+      >
+        <!-- Hamburger icon (3 lines) -->
+        <svg id="hamburger-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <!-- Close icon (X) — shown when menu is open -->
+        <svg id="close-icon" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+    </div>
+
+    <!-- Mobile menu panel (slides in below nav bar) -->
+    <div
+      id="mobile-menu"
+      role="menu"
+      aria-labelledby="hamburger-btn"
+      class="hidden sm:hidden border-t border-slate-100 bg-white/95 backdrop-blur-sm animate-slide-down"
+    >
+      <!-- User identity strip -->
+      <div class="px-4 py-3 border-b border-slate-100 flex items-center gap-3">
+        <span class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold select-none flex-shrink-0">
+          AL
+        </span>
+        <div>
+          <p class="text-xs text-slate-500 font-medium">Signed in as</p>
+          <p class="text-sm font-semibold text-slate-800 truncate">alice@example.com</p>
+        </div>
+      </div>
+
+      <!-- Primary nav links -->
+      <div class="px-2 py-2 border-b border-slate-100">
+        <a href="#" role="menuitem" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-blue-600 bg-blue-50 transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+          </svg>
+          Home
+        </a>
+        <a href="#" role="menuitem" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+          </svg>
+          Plans
+        </a>
+      </div>
+
+      <!-- Account actions -->
+      <div class="px-2 py-2">
+        <p class="px-3 pt-1 pb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Account</p>
+
+        <a href="profile.html" role="menuitem" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+          <span class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+          </span>
+          Profile
+        </a>
+
+        <a href="changePassword.html" role="menuitem" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+          <span class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+          </span>
+          Change Password
+        </a>
+
+        <div class="border-t border-slate-100 my-2"></div>
+
+        <a href="logout.html" role="menuitem" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+          <span class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            </svg>
+          </span>
+          Sign Out
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ======================================================
+       PAGE BODY — placeholder content so nav sits in context
+       ====================================================== -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Annotation banner -->
+    <div class="mb-8 rounded-2xl bg-amber-50 border border-amber-200 px-5 py-4 flex gap-3">
+      <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+      </svg>
+      <div class="text-sm text-amber-800">
+        <p class="font-semibold mb-1">UI Mockup — User Menu</p>
+        <ul class="list-disc list-inside space-y-0.5 text-amber-700">
+          <li><strong>Mobile (&lt; 640 px):</strong> tap the hamburger icon (☰) in the top-right corner to open the slide-down menu with navigation links and account actions.</li>
+          <li><strong>Desktop (≥ 640 px):</strong> click the avatar / email button in the top-right corner to open the dropdown menu.</li>
+          <li>Menu items: <strong>Profile</strong>, <strong>Change Password</strong>, and <strong>Sign Out</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Static annotation: desktop dropdown state ── -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold text-slate-700 mb-4">Desktop — Dropdown (open state)</h2>
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg p-6">
+        <p class="text-sm text-slate-500 mb-5">The dropdown appears below the avatar button. It has a "signed-in as" identity header, then menu items, then a divider before Sign Out.</p>
+
+        <!-- Static replica of the dropdown (always visible for review) -->
+        <div class="w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5">
+          <div class="px-4 py-3 border-b border-slate-100">
+            <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">Signed in as</p>
+            <p class="text-sm font-semibold text-slate-800 truncate mt-0.5">alice@example.com</p>
+          </div>
+          <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+            <span class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </span>
+            <span class="font-medium">Profile</span>
+          </a>
+          <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+            <span class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+            </span>
+            <span class="font-medium">Change Password</span>
+          </a>
+          <div class="border-t border-slate-100 my-1"></div>
+          <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+            <span class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+            </span>
+            <span class="font-medium">Sign Out</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Static annotation: mobile menu state ── -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold text-slate-700 mb-4">Mobile — Slide-down panel (open state)</h2>
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg p-6">
+        <p class="text-sm text-slate-500 mb-5">On small screens the panel slides down from below the nav bar. It shows an identity strip, primary nav links, then account actions.</p>
+
+        <!-- Static replica of the mobile panel -->
+        <div class="max-w-sm border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-md">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center gap-3 bg-white">
+            <span class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold select-none flex-shrink-0">AL</span>
+            <div>
+              <p class="text-xs text-slate-500 font-medium">Signed in as</p>
+              <p class="text-sm font-semibold text-slate-800">alice@example.com</p>
+            </div>
+          </div>
+          <div class="px-2 py-2 border-b border-slate-100 bg-white">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-blue-600 bg-blue-50">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+              </svg>
+              Home
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50">
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+              </svg>
+              Plans
+            </a>
+          </div>
+          <div class="px-2 py-2 bg-white">
+            <p class="px-3 pt-1 pb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Account</p>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600">
+              <span class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+              </span>
+              Profile
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600">
+              <span class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+              </span>
+              Change Password
+            </a>
+            <div class="border-t border-slate-100 my-2"></div>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50">
+              <span class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                </svg>
+              </span>
+              Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================
+       SCRIPTS — toggle behaviour
+       ====================================================== -->
+  <script>
+    // ── Desktop dropdown ──────────────────────────────────
+    const desktopBtn      = document.getElementById('desktop-menu-btn');
+    const desktopDropdown = document.getElementById('desktop-dropdown');
+    const desktopChevron  = document.getElementById('desktop-chevron');
+
+    function toggleDesktopMenu() {
+      const isOpen = !desktopDropdown.classList.contains('hidden');
+      if (isOpen) {
+        closeDesktopMenu();
+      } else {
+        openDesktopMenu();
+      }
+    }
+
+    function openDesktopMenu() {
+      desktopDropdown.classList.remove('hidden');
+      desktopBtn.setAttribute('aria-expanded', 'true');
+      desktopChevron.style.transform = 'rotate(180deg)';
+    }
+
+    function closeDesktopMenu() {
+      desktopDropdown.classList.add('hidden');
+      desktopBtn.setAttribute('aria-expanded', 'false');
+      desktopChevron.style.transform = 'rotate(0deg)';
+    }
+
+    // Close desktop menu when clicking outside
+    document.addEventListener('click', function (e) {
+      const wrapper = document.getElementById('desktop-menu-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        closeDesktopMenu();
+      }
+    });
+
+    // Close desktop menu on Escape
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeDesktopMenu();
+        closeMobileMenu();
+      }
+    });
+
+    // ── Mobile hamburger ──────────────────────────────────
+    const hamburgerBtn  = document.getElementById('hamburger-btn');
+    const mobileMenu    = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon     = document.getElementById('close-icon');
+
+    function toggleMobileMenu() {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      if (isOpen) {
+        closeMobileMenu();
+      } else {
+        openMobileMenu();
+      }
+    }
+
+    function openMobileMenu() {
+      mobileMenu.classList.remove('hidden');
+      hamburgerBtn.setAttribute('aria-expanded', 'true');
+      hamburgerIcon.classList.add('hidden');
+      closeIcon.classList.remove('hidden');
+    }
+
+    function closeMobileMenu() {
+      mobileMenu.classList.add('hidden');
+      hamburgerBtn.setAttribute('aria-expanded', 'false');
+      hamburgerIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+    }
+  </script>
+
+</body>
+</html>

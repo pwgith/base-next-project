@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Landing Page — UI Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeIn 0.4s ease-out both; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+  </style>
+</head>
+<body class="font-['Inter',system-ui,-apple-system,sans-serif] bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 min-h-screen flex flex-col">
+
+  <!-- ====== NAV BAR ====== -->
+  <nav class="bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
+      <a href="#" class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        Model Helper
+      </a>
+      <div class="flex gap-6 text-sm font-medium text-slate-600">
+        <a href="#" class="text-blue-600 border-b-2 border-blue-600 pb-0.5">Home</a>
+        <a href="#" class="hover:text-slate-900 transition-colors">Plans</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ====== MAIN CONTENT ====== -->
+  <main class="flex-1 animate-fade-in">
+    <!-- Hero section -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-8 text-center">
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
+        Model Helper
+      </h1>
+      <p class="text-slate-600 text-lg sm:text-xl mt-4 max-w-2xl mx-auto">
+        Modeling for the rest of us.
+      </p>
+    </div>
+
+    <!-- Action cards -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+        <!-- Analyse Floor Plan -->
+        <a href="#" class="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/50 hover:shadow-xl transition-shadow duration-200 block">
+          <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3">
+            <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">Analyse Floor Plan</h3>
+          <p class="text-sm text-slate-600 mt-1">Upload a floor plan image and get a detailed room-by-room measurement breakdown.</p>
+        </a>
+
+        <!-- Placeholder for future actions (visual only) -->
+        <div class="bg-white/40 backdrop-blur-sm rounded-2xl shadow p-6 border border-dashed border-slate-300 flex items-center justify-center">
+          <p class="text-sm text-slate-400 text-center">More tools coming soon</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ====== FOOTER ====== -->
+  <footer class="border-t border-slate-200 bg-white/60 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between text-xs text-slate-500">
+      <span>&copy; 2026 Model Helper</span>
+      <span>v0.1.1</span>
+    </div>
+  </footer>
+
+</body>
+</html>

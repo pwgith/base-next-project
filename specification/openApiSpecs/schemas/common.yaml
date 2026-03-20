@@ -1,0 +1,113 @@
+# Reusable error and envelope schemas
+
+ErrorResponse:
+  type: object
+  properties:
+    error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          description: Human-readable error message
+          example: "displayName must not be empty."
+      required:
+        - message
+  required:
+    - error
+
+UnauthorizedError:
+  description: Authentication required or token invalid
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorResponse'
+      example:
+        error:
+          message: "Authentication required."
+
+ForbiddenError:
+  description: Insufficient scope or ownership
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorResponse'
+      example:
+        error:
+          message: "Insufficient scope."
+
+NotFoundError:
+  description: Resource not found
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorResponse'
+      example:
+        error:
+          message: "Resource not found."
+
+ValidationError:
+  description: Request validation failed
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorResponse'
+      example:
+        error:
+          code: VALIDATION_ERROR
+          message: "name is required."
+
+ConflictError:
+  description: Domain conflict or concurrency error
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorResponse'
+      example:
+        error:
+          message: "A project with this name already exists."
+
+UnprocessableEntityError:
+  description: Domain validation error
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorResponse'
+      example:
+        error:
+          message: "Invalid IFC type."
+
+InternalError:
+  description: Internal server error
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorResponse'
+      example:
+        error:
+          message: "An unexpected error occurred."
+
+# Shared parameter definitions
+FileIdParam:
+  name: fileId
+  in: path
+  required: true
+  description: UUID of the IFC file
+  schema:
+    type: string
+    format: uuid
+    example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+GlobalIdParam:
+  name: globalId
+  in: path
+  required: true
+  description: 22-character IFC GlobalId (Base64 encoded)
+  schema:
+    type: string
+    minLength: 22
+    maxLength: 22
+    example: "0EkBQ1RFn5bwJUMlGd3OaE"

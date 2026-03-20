@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@utility animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@utility input-error {
+  border-color: #f87171 !important;
+  &:focus {
+    --tw-ring-color: #ef4444 !important;
+  }
+}

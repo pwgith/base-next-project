@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Chat Panel — UI Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulse-dot {
+      0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+      40%           { opacity: 1;   transform: scale(1);   }
+    }
+    .msg-enter { animation: fade-in 0.25s ease-out both; }
+    .spinner   { animation: spin 0.9s linear infinite; }
+    .dot       { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #64748b; animation: pulse-dot 1.2s ease-in-out infinite; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    /* Custom scrollbar for chat history */
+    #chatHistory::-webkit-scrollbar { width: 4px; }
+    #chatHistory::-webkit-scrollbar-track { background: transparent; }
+    #chatHistory::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+  </style>
+</head>
+<body class="font-['Inter',system-ui,-apple-system,sans-serif] bg-slate-900 text-slate-900" style="height:100vh;overflow:hidden;">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOP NAV
+  ═══════════════════════════════════════════════════════════ -->
+  <header class="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700 flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <!-- Back link -->
+      <a href="#" class="text-slate-400 hover:text-slate-200 transition-colors text-sm flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Projects
+      </a>
+      <span class="text-slate-600">/</span>
+      <span class="text-slate-200 text-sm font-medium">Riverside House</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <!-- Version badge -->
+      <span id="versionBadge" class="text-xs bg-emerald-900/60 text-emerald-300 border border-emerald-700/50 px-2 py-0.5 rounded-full font-medium">v7</span>
+      <!-- Reload button -->
+      <button
+        onclick="simulateReload()"
+        title="Reload model"
+        class="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
+        aria-label="Reload model"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      </button>
+      <!-- User avatar -->
+      <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">A</div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN WORKSPACE (viewer + chat panel)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="flex" style="height:calc(100vh - 41px);">
+
+    <!-- ── LEFT: 3D Viewer ─────────────────────────────────── -->
+    <div id="viewer" class="relative flex-1 bg-slate-950 overflow-hidden">
+
+      <!-- Mock 3D scene – SVG floor-plan wireframe -->
+      <div class="absolute inset-0 flex items-center justify-center select-none pointer-events-none">
+        <svg viewBox="0 0 500 380" class="w-full max-w-xl opacity-60" aria-hidden="true">
+          <!-- Ground slab -->
+          <rect x="60" y="60" width="380" height="260" rx="2" fill="none" stroke="#334155" stroke-width="2"/>
+          <!-- Room divisions -->
+          <line x1="220" y1="60" x2="220" y2="320" stroke="#334155" stroke-width="1.5"/>
+          <line x1="60" y1="190" x2="220" y2="190" stroke="#334155" stroke-width="1.5"/>
+          <line x1="340" y1="60" x2="340" y2="200" stroke="#334155" stroke-width="1.5"/>
+          <line x1="340" y1="200" x2="440" y2="200" stroke="#334155" stroke-width="1.5"/>
+          <!-- Highlight: newly added wall (B-C) -->
+          <line id="newWall" x1="220" y1="190" x2="340" y2="190" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6 3"/>
+          <!-- Doors (arcs) -->
+          <path d="M220 100 A30 30 0 0 1 250 70" fill="none" stroke="#475569" stroke-width="1"/>
+          <path d="M90 190 A30 30 0 0 1 120 160" fill="none" stroke="#475569" stroke-width="1"/>
+          <!-- Windows -->
+          <rect x="60" y="110" width="2" height="40" fill="#60a5fa"/>
+          <rect x="60" y="240" width="2" height="40" fill="#60a5fa"/>
+          <rect x="438" y="100" width="2" height="40" fill="#60a5fa"/>
+          <rect x="200" y="58" width="40" height="2" fill="#60a5fa"/>
+          <rect x="300" y="58" width="40" height="2" fill="#60a5fa"/>
+          <!-- Room labels -->
+          <text x="130" y="135" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Living Room</text>
+          <text x="130" y="260" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Kitchen</text>
+          <text x="280" y="190" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Hallway</text>
+          <text x="390" y="135" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Master Bed</text>
+          <text x="390" y="265" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Bed 2</text>
+          <!-- Axis labels -->
+          <text x="220" y="48" fill="#475569" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">B</text>
+          <text x="340" y="48" fill="#475569" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">C</text>
+          <text x="48" y="190" fill="#475569" font-size="9" text-anchor="middle" font-family="Inter,sans-serif">2</text>
+        </svg>
+      </div>
+
+      <!-- Orbit/pan/zoom hint -->
+      <div class="absolute bottom-4 left-4 text-xs text-slate-600 space-y-0.5 pointer-events-none">
+        <div>Left-drag — orbit</div>
+        <div>Right-drag — pan</div>
+        <div>Scroll — zoom</div>
+      </div>
+
+      <!-- Reload overlay (hidden by default) -->
+      <div id="reloadOverlay" class="hidden absolute inset-0 bg-slate-950/70 flex flex-col items-center justify-center gap-3">
+        <svg class="w-8 h-8 text-blue-400 spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <span class="text-slate-300 text-sm">Reloading model…</span>
+      </div>
+
+      <!-- Viewer error banner (hidden by default) -->
+      <div id="viewerError" class="hidden absolute bottom-14 left-4 right-4 bg-red-900/80 border border-red-700/60 rounded-xl px-4 py-3 flex items-start gap-3 text-sm text-red-200">
+        <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <span>The model was updated but could not be reloaded automatically.</span>
+        <button onclick="document.getElementById('viewerError').classList.add('hidden')" class="ml-auto text-red-400 hover:text-red-200">✕</button>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: AI Chat Panel ────────────────────────────── -->
+    <div class="flex flex-col bg-white border-l border-slate-200" style="width:360px;min-width:280px;max-width:480px;">
+
+      <!-- Panel header -->
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <!-- AI sparkle icon -->
+          <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <span class="text-sm font-semibold text-slate-900">AI Model Assistant</span>
+        </div>
+        <button
+          onclick="clearChat()"
+          title="Clear conversation"
+          class="text-xs text-slate-400 hover:text-slate-600 transition-colors px-2 py-1 rounded hover:bg-slate-100"
+          aria-label="Clear conversation"
+        >Clear</button>
+      </div>
+
+      <!-- Chat history -->
+      <div id="chatHistory" class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+
+        <!-- ── System welcome message ── -->
+        <div class="msg-enter flex gap-2">
+          <div class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="bg-slate-50 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed">
+              Hi! Describe a change you'd like to make to the <strong>Riverside House</strong> model and I'll handle the rest. For example:<br/>
+              <span class="text-slate-500 italic text-xs mt-1 block">"Add a 3-metre internal wall between axes B and C"</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Example: completed exchange ── -->
+        <div id="exampleExchange">
+          <!-- User message -->
+          <div class="msg-enter flex gap-2 flex-row-reverse">
+            <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-white text-xs font-bold">A</div>
+            <div class="flex-1">
+              <div class="bg-blue-600 text-white rounded-xl rounded-tr-none px-3 py-2.5 text-sm leading-relaxed">
+                Add a 3-metre internal wall between axes B and C on the ground floor
+              </div>
+            </div>
+          </div>
+
+          <!-- Status: checking relevance (shown briefly, then replaced) -->
+          <!-- (In the mockup we show the completed state) -->
+
+          <!-- AI reply -->
+          <div class="msg-enter flex gap-2 mt-3">
+            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+            </div>
+            <div class="flex-1">
+              <div class="bg-emerald-50 border border-emerald-200 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed">
+                <div class="flex items-center gap-1.5 text-emerald-700 font-medium text-xs mb-1.5">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                  Done
+                </div>
+                Wall added between axes B and C on the ground floor. The model has been updated to <strong>version 7</strong>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spacer so new messages appear naturally at bottom -->
+        <div id="chatBottom"></div>
+      </div>
+
+      <!-- Status indicator (shown while processing) -->
+      <div id="statusBar" class="hidden flex-shrink-0 px-4 pb-1">
+        <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+          <svg id="statusSpinner" class="w-3.5 h-3.5 text-violet-500 spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M12 2a10 10 0 0 1 10 10"/></svg>
+          <span id="statusText">Checking relevance…</span>
+        </div>
+      </div>
+
+      <!-- Chat input -->
+      <div class="flex-shrink-0 px-3 pb-3 pt-2 border-t border-slate-100">
+        <div class="flex items-end gap-2">
+          <textarea
+            id="chatInput"
+            rows="2"
+            placeholder="Describe a model change…"
+            class="flex-1 resize-none rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder-slate-400 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 leading-snug"
+            aria-label="Instruction input"
+            onkeydown="handleKey(event)"
+            style="max-height:120px;"
+          ></textarea>
+          <button
+            id="sendBtn"
+            onclick="handleSend()"
+            aria-label="Send instruction"
+            class="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 text-white flex items-center justify-center hover:from-violet-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-40"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7"/></svg>
+          </button>
+        </div>
+        <p class="text-xs text-slate-400 mt-1.5 px-1">
+          Instructions are checked for model relevance before execution.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE-SWITCHER TOOLBAR (mockup demo controls)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur border border-slate-200 rounded-2xl shadow-xl px-4 py-2.5 flex items-center gap-3 z-50 text-xs">
+    <span class="text-slate-500 font-medium mr-1">Demo states:</span>
+    <button onclick="showState('checking')"  class="px-2.5 py-1 rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors font-medium">Checking…</button>
+    <button onclick="showState('executing')" class="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors font-medium">Executing…</button>
+    <button onclick="showState('rejected')"  class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors font-medium">Rejected</button>
+    <button onclick="showState('error')"     class="px-2.5 py-1 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition-colors font-medium">API Error</button>
+    <button onclick="showState('viewErr')"   class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200 transition-colors font-medium">Viewer Error</button>
+    <button onclick="showState('reset')"     class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors font-medium">Reset</button>
+  </div>
+
+  <script>
+    // ── Helpers ──────────────────────────────────────────────
+
+    const version = { current: 7 };
+
+    function scrollBottom() {
+      const h = document.getElementById('chatHistory');
+      h.scrollTop = h.scrollHeight;
+    }
+
+    function setStatus(text) {
+      const bar = document.getElementById('statusBar');
+      if (text) {
+        document.getElementById('statusText').textContent = text;
+        bar.classList.remove('hidden');
+      } else {
+        bar.classList.add('hidden');
+      }
+    }
+
+    function appendMessage(role, html) {
+      const history = document.getElementById('chatHistory');
+      const bottom  = document.getElementById('chatBottom');
+      const wrap    = document.createElement('div');
+      wrap.className = 'msg-enter flex gap-2' + (role === 'user' ? ' flex-row-reverse' : '');
+
+      const avatar = document.createElement('div');
+      if (role === 'user') {
+        avatar.className = 'w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-white text-xs font-bold';
+        avatar.textContent = 'A';
+      } else {
+        avatar.className = 'w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5';
+        avatar.innerHTML = '<svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>';
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = 'flex-1';
+      const inner = document.createElement('div');
+
+      if (role === 'user') {
+        inner.className = 'bg-blue-600 text-white rounded-xl rounded-tr-none px-3 py-2.5 text-sm leading-relaxed';
+      } else if (role === 'success') {
+        inner.className = 'bg-emerald-50 border border-emerald-200 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed';
+      } else if (role === 'warning') {
+        inner.className = 'bg-amber-50 border border-amber-200 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed';
+      } else if (role === 'error') {
+        inner.className = 'bg-red-50 border border-red-200 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed';
+      } else {
+        inner.className = 'bg-slate-50 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed';
+      }
+
+      inner.innerHTML = html;
+      bubble.appendChild(inner);
+      wrap.appendChild(avatar);
+      wrap.appendChild(bubble);
+      history.insertBefore(wrap, bottom);
+      scrollBottom();
+      return inner;
+    }
+
+    function setInputEnabled(enabled) {
+      const input = document.getElementById('chatInput');
+      const btn   = document.getElementById('sendBtn');
+      input.disabled = !enabled;
+      btn.disabled   = !enabled;
+      if (enabled) input.focus();
+    }
+
+    // ── Live send simulation ─────────────────────────────────
+
+    const irrelevantKeywords = ['weather', 'joke', 'stock', 'recipe', 'sport', 'football', 'movie'];
+
+    function isIrrelevant(text) {
+      return irrelevantKeywords.some(k => text.toLowerCase().includes(k));
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+    }
+
+    function handleSend() {
+      const input = document.getElementById('chatInput');
+      const text  = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      setInputEnabled(false);
+
+      appendMessage('user', text);
+      setStatus('Checking relevance…');
+
+      setTimeout(() => {
+        if (isIrrelevant(text)) {
+          setStatus(null);
+          appendMessage('warning',
+            '<span class="font-medium text-amber-700 text-xs block mb-1">Not model-relevant</span>' +
+            "That instruction doesn't appear to relate to the IFC model. Please describe a change you'd like to make to the building elements, materials, properties, or spatial structure."
+          );
+          setInputEnabled(true);
+          return;
+        }
+
+        setStatus('Executing…');
+        setTimeout(() => {
+          setStatus(null);
+          version.current++;
+          document.getElementById('versionBadge').textContent = 'v' + version.current;
+          appendMessage('success',
+            '<div class="flex items-center gap-1.5 text-emerald-700 font-medium text-xs mb-1.5">' +
+            '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>' +
+            'Done</div>' +
+            'Instruction applied. The model has been updated to <strong>version ' + version.current + '</strong>.'
+          );
+          setInputEnabled(true);
+        }, 1800);
+      }, 1200);
+    }
+
+    // ── Demo state buttons ───────────────────────────────────
+
+    function showState(state) {
+      // Hide overlays first
+      document.getElementById('reloadOverlay').classList.add('hidden');
+      document.getElementById('viewerError').classList.add('hidden');
+
+      if (state === 'checking') {
+        setStatus('Checking relevance…');
+        setInputEnabled(false);
+      } else if (state === 'executing') {
+        setStatus('Executing…');
+        setInputEnabled(false);
+      } else if (state === 'rejected') {
+        setStatus(null);
+        appendMessage('warning',
+          '<span class="font-medium text-amber-700 text-xs block mb-1">Not model-relevant</span>' +
+          "That instruction doesn't appear to relate to the IFC model. Please describe a change to the building elements, materials, or spatial structure."
+        );
+        setInputEnabled(true);
+      } else if (state === 'error') {
+        setStatus(null);
+        appendMessage('error',
+          '<span class="font-medium text-red-700 text-xs block mb-1">Partial failure</span>' +
+          'The wall was added successfully, but adding the door failed (400 Bad Request — the target host element does not support IfcDoor placement at the specified offset). The model retains the new wall at <strong>version ' + (version.current + 1) + '</strong>.'
+        );
+        version.current++;
+        document.getElementById('versionBadge').textContent = 'v' + version.current;
+        setInputEnabled(true);
+      } else if (state === 'viewErr') {
+        setStatus(null);
+        appendMessage('error',
+          'The model was updated but the viewer could not reload automatically. Use the reload button to try again.'
+        );
+        document.getElementById('viewerError').classList.remove('hidden');
+        setInputEnabled(true);
+      } else if (state === 'reset') {
+        setStatus(null);
+        const history = document.getElementById('chatHistory');
+        const bottom  = document.getElementById('chatBottom');
+        // Remove all messages except the starting children and chatBottom
+        const toRemove = [];
+        for (const child of history.children) {
+          if (child.id !== 'chatBottom' && child.id !== 'exampleExchange' && !child.querySelector('[class*="from-violet"]') && !child.classList.contains('msg-enter')) {
+            // leave it
+          }
+        }
+        // Simple reset: reload the page
+        location.reload();
+      }
+    }
+
+    function simulateReload() {
+      const overlay = document.getElementById('reloadOverlay');
+      overlay.classList.remove('hidden');
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+      }, 1500);
+    }
+
+    function clearChat() {
+      const history = document.getElementById('chatHistory');
+      const bottom  = document.getElementById('chatBottom');
+      // Keep only the welcome message (first child) and chatBottom
+      while (history.children.length > 2) {
+        history.removeChild(history.children[1]);
+      }
+      setStatus(null);
+      setInputEnabled(true);
+    }
+
+    // Auto-scroll on load
+    scrollBottom();
+  </script>
+</body>
+</html>

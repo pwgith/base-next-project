@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inspect AI Tool Calls — UI Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .msg-enter  { animation: fade-in 0.25s ease-out both; }
+    .spinner    { animation: spin 0.9s linear infinite; }
+    /* Custom scrollbar */
+    #chatHistory::-webkit-scrollbar { width: 4px; }
+    #chatHistory::-webkit-scrollbar-track { background: transparent; }
+    #chatHistory::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+    /* Disclosure expand/collapse */
+    .tool-detail { overflow: hidden; transition: max-height 0.3s ease, opacity 0.25s ease; max-height: 0; opacity: 0; }
+    .tool-detail.open { max-height: 2000px; opacity: 1; }
+  </style>
+</head>
+<body class="font-['Inter',system-ui,-apple-system,sans-serif] bg-slate-900 text-slate-900" style="height:100vh;overflow:hidden;">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOP NAV
+  ═══════════════════════════════════════════════════════════ -->
+  <header class="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700 flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <a href="#" class="text-slate-400 hover:text-slate-200 transition-colors text-sm flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Projects
+      </a>
+      <span class="text-slate-600">/</span>
+      <span class="text-slate-200 text-sm font-medium">Riverside House</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs bg-emerald-900/60 text-emerald-300 border border-emerald-700/50 px-2 py-0.5 rounded-full font-medium">v8</span>
+      <button title="Reload model" class="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors" aria-label="Reload model">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      </button>
+      <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">A</div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN WORKSPACE (viewer + chat panel)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="flex" style="height:calc(100vh - 41px);">
+
+    <!-- ── LEFT: 3D Viewer (simplified) ───────────────────── -->
+    <div class="relative flex-1 bg-slate-950 overflow-hidden">
+      <div class="absolute inset-0 flex items-center justify-center select-none pointer-events-none">
+        <svg viewBox="0 0 500 380" class="w-full max-w-xl opacity-60" aria-hidden="true">
+          <rect x="60" y="60" width="380" height="260" rx="2" fill="none" stroke="#334155" stroke-width="2"/>
+          <line x1="220" y1="60" x2="220" y2="320" stroke="#334155" stroke-width="1.5"/>
+          <line x1="60" y1="190" x2="220" y2="190" stroke="#334155" stroke-width="1.5"/>
+          <line x1="340" y1="60" x2="340" y2="200" stroke="#334155" stroke-width="1.5"/>
+          <line x1="340" y1="200" x2="440" y2="200" stroke="#334155" stroke-width="1.5"/>
+          <line x1="220" y1="190" x2="340" y2="190" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6 3"/>
+          <text x="130" y="135" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Living Room</text>
+          <text x="130" y="260" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Kitchen</text>
+          <text x="280" y="190" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Hallway</text>
+          <text x="390" y="135" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Master Bed</text>
+          <text x="390" y="265" fill="#64748b" font-size="11" text-anchor="middle" font-family="Inter,sans-serif">Bed 2</text>
+        </svg>
+      </div>
+      <div class="absolute bottom-4 left-4 text-xs text-slate-600 space-y-0.5 pointer-events-none">
+        <div>Left-drag — orbit</div>
+        <div>Right-drag — pan</div>
+        <div>Scroll — zoom</div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: AI Chat Panel ────────────────────────────── -->
+    <div class="flex flex-col bg-white border-l border-slate-200" style="width:420px;min-width:320px;max-width:520px;">
+
+      <!-- Panel header -->
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <span class="text-sm font-semibold text-slate-900">AI Model Assistant</span>
+        </div>
+        <button title="Clear conversation" class="text-xs text-slate-400 hover:text-slate-600 transition-colors px-2 py-1 rounded hover:bg-slate-100" aria-label="Clear conversation">Clear</button>
+      </div>
+
+      <!-- Chat history -->
+      <div id="chatHistory" class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+
+        <!-- ── System welcome ── -->
+        <div class="msg-enter flex gap-2">
+          <div class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="bg-slate-50 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed">
+              Hi! Describe a change you'd like to make to the <strong>Riverside House</strong> model and I'll handle the rest.
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════════════
+             EXCHANGE 1 — Success with tool-call detail (collapsed by default)
+        ════════════════════════════════════════════════════ -->
+
+        <!-- User message -->
+        <div class="msg-enter flex gap-2 flex-row-reverse">
+          <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-white text-xs font-bold">A</div>
+          <div class="flex-1">
+            <div class="bg-blue-600 text-white rounded-xl rounded-tr-none px-3 py-2.5 text-sm leading-relaxed">
+              Add a wall and then add a window to it
+            </div>
+          </div>
+        </div>
+
+        <!-- AI success reply with tool-call toggle -->
+        <div class="msg-enter flex gap-2 mt-3" id="exchange1">
+          <div class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <!-- Success bubble -->
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed">
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium text-xs mb-1.5">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                Done
+              </div>
+              Wall and window added. The model has been updated to <strong>version 8</strong>.
+            </div>
+
+            <!-- Tool-call toggle -->
+            <button
+              onclick="toggleToolCalls('tc1')"
+              class="mt-1.5 flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 transition-colors group"
+              aria-expanded="false"
+              aria-controls="tc1"
+              id="tc1-btn"
+            >
+              <svg class="w-3 h-3 transition-transform duration-200" id="tc1-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <svg class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span>Show tool calls</span>
+              <span class="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full text-[10px] font-medium">2</span>
+            </button>
+
+            <!-- Tool-call detail (collapsed) -->
+            <div id="tc1" class="tool-detail mt-2" role="region" aria-label="Tool call details">
+              <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+
+                <!-- Tool call 1: POST create element (wall) -->
+                <div class="border-b border-slate-100">
+                  <div class="flex items-center justify-between px-3 py-2 bg-slate-50">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center gap-1">
+                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded">POST</span>
+                        <span class="text-xs text-slate-700 font-mono">/api/projects/proj_01/ifc/elements</span>
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 py-0.5 rounded">201</span>
+                      <span class="text-[10px] text-slate-400">142 ms</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 space-y-2">
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Request</div>
+                      <pre class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">{
+  "type": "IfcWallStandardCase",
+  "name": "Interior Wall B-C",
+  "description": "3-metre internal wall between axes B and C",
+  "properties": {
+    "height": 2.8,
+    "length": 3.0,
+    "thickness": 0.15
+  }
+}</pre>
+                    </div>
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Response</div>
+                      <pre class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">{
+  "id": "elem_4f91a",
+  "type": "IfcWallStandardCase",
+  "name": "Interior Wall B-C",
+  "version": 8
+}</pre>
+                    </div>
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Headers</div>
+                      <pre class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">Authorization: Bearer ████████████
+Content-Type: application/json</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tool call 2: POST create element (window) -->
+                <div>
+                  <div class="flex items-center justify-between px-3 py-2 bg-slate-50">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center gap-1">
+                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded">POST</span>
+                        <span class="text-xs text-slate-700 font-mono">/api/projects/proj_01/ifc/elements</span>
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 py-0.5 rounded">201</span>
+                      <span class="text-[10px] text-slate-400">89 ms</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 space-y-2">
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Request</div>
+                      <pre class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">{
+  "type": "IfcWindow",
+  "name": "Window W-01",
+  "hostElement": "elem_4f91a",
+  "properties": {
+    "width": 1.2,
+    "height": 1.4,
+    "sillHeight": 0.9
+  }
+}</pre>
+                    </div>
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Response</div>
+                      <pre class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">{
+  "id": "elem_7b3de",
+  "type": "IfcWindow",
+  "name": "Window W-01",
+  "version": 8
+}</pre>
+                    </div>
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Headers</div>
+                      <pre class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">Authorization: Bearer ████████████
+Content-Type: application/json</pre>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════════════
+             EXCHANGE 2 — Partial failure with error-highlighted call
+        ════════════════════════════════════════════════════ -->
+
+        <!-- User message -->
+        <div class="msg-enter flex gap-2 flex-row-reverse mt-4">
+          <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-white text-xs font-bold">A</div>
+          <div class="flex-1">
+            <div class="bg-blue-600 text-white rounded-xl rounded-tr-none px-3 py-2.5 text-sm leading-relaxed">
+              Add a slab and set its fire rating
+            </div>
+          </div>
+        </div>
+
+        <!-- AI error reply with tool-call toggle -->
+        <div class="msg-enter flex gap-2 mt-3" id="exchange2">
+          <div class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <!-- Partial-failure bubble -->
+            <div class="bg-red-50 border border-red-200 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed">
+              <div class="flex items-center gap-1.5 text-red-700 font-medium text-xs mb-1.5">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                Partial failure
+              </div>
+              The slab was added successfully, but setting the fire rating failed (400 Bad Request — invalid property set name). The model retains the new slab at <strong>version 9</strong>.
+            </div>
+
+            <!-- Tool-call toggle -->
+            <button
+              onclick="toggleToolCalls('tc2')"
+              class="mt-1.5 flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 transition-colors group"
+              aria-expanded="false"
+              aria-controls="tc2"
+              id="tc2-btn"
+            >
+              <svg class="w-3 h-3 transition-transform duration-200" id="tc2-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <svg class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span>Show tool calls</span>
+              <span class="bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full text-[10px] font-medium">1 failed</span>
+            </button>
+
+            <!-- Tool-call detail (collapsed) -->
+            <div id="tc2" class="tool-detail mt-2" role="region" aria-label="Tool call details">
+              <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+
+                <!-- Tool call 1: POST slab (success) -->
+                <div class="border-b border-slate-100">
+                  <div class="flex items-center justify-between px-3 py-2 bg-slate-50">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center gap-1">
+                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded">POST</span>
+                        <span class="text-xs text-slate-700 font-mono">/api/projects/proj_01/ifc/elements</span>
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 py-0.5 rounded">201</span>
+                      <span class="text-[10px] text-slate-400">127 ms</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 space-y-2">
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Request</div>
+                      <pre class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">{
+  "type": "IfcSlab",
+  "name": "Ground Floor Slab",
+  "properties": {
+    "thickness": 0.25,
+    "area": 48.0
+  }
+}</pre>
+                    </div>
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Response</div>
+                      <pre class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">{
+  "id": "elem_c82f1",
+  "type": "IfcSlab",
+  "name": "Ground Floor Slab",
+  "version": 9
+}</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tool call 2: PUT property set (FAILED — visually highlighted) -->
+                <div class="bg-red-50/50">
+                  <div class="flex items-center justify-between px-3 py-2 bg-red-50 border-l-2 border-red-400">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center gap-1">
+                        <span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded">PUT</span>
+                        <span class="text-xs text-slate-700 font-mono">/api/projects/proj_01/ifc/elements/elem_c82f1/properties</span>
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="bg-red-100 text-red-700 text-[10px] font-bold px-1.5 py-0.5 rounded">400</span>
+                      <span class="text-[10px] text-slate-400">53 ms</span>
+                    </div>
+                  </div>
+                  <div class="px-3 py-2 space-y-2 border-l-2 border-red-400">
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Request</div>
+                      <pre class="text-xs text-slate-600 bg-white rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">{
+  "propertySetName": "Pset_FireRating",
+  "properties": {
+    "FireRating": "REI 60"
+  }
+}</pre>
+                    </div>
+                    <div>
+                      <div class="text-[10px] uppercase tracking-wide text-red-500 font-semibold mb-1">Error Response</div>
+                      <pre class="text-xs text-red-700 bg-white border border-red-100 rounded-lg px-2.5 py-2 overflow-x-auto font-mono leading-relaxed">{
+  "error": "INVALID_PROPERTY_SET",
+  "message": "Property set name 'Pset_FireRating' is not valid. Use 'Pset_SlabCommon' for slab fire rating properties."
+}</pre>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════════════
+             EXCHANGE 3 — Relevance-rejected (no toggle)
+        ════════════════════════════════════════════════════ -->
+
+        <!-- User message -->
+        <div class="msg-enter flex gap-2 flex-row-reverse mt-4">
+          <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-white text-xs font-bold">A</div>
+          <div class="flex-1">
+            <div class="bg-blue-600 text-white rounded-xl rounded-tr-none px-3 py-2.5 text-sm leading-relaxed">
+              What is the weather today?
+            </div>
+          </div>
+        </div>
+
+        <!-- AI rejection — no tool-call toggle present -->
+        <div class="msg-enter flex gap-2 mt-3" id="exchange3">
+          <div class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="bg-amber-50 border border-amber-200 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed">
+              <span class="font-medium text-amber-700 text-xs block mb-1">Not model-relevant</span>
+              That instruction doesn't appear to relate to the IFC model. Please describe a change you'd like to make to the building elements, materials, properties, or spatial structure.
+            </div>
+            <!-- No "Show tool calls" toggle — no API calls were made -->
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════════════
+             EXCHANGE 4 — Clarification question (toggle says "No tool calls")
+        ════════════════════════════════════════════════════ -->
+
+        <!-- User message -->
+        <div class="msg-enter flex gap-2 flex-row-reverse mt-4">
+          <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5 text-white text-xs font-bold">A</div>
+          <div class="flex-1">
+            <div class="bg-blue-600 text-white rounded-xl rounded-tr-none px-3 py-2.5 text-sm leading-relaxed">
+              Which wall did you just add?
+            </div>
+          </div>
+        </div>
+
+        <!-- AI clarification — toggle present but says "No tool calls" -->
+        <div class="msg-enter flex gap-2 mt-3" id="exchange4">
+          <div class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="bg-slate-50 rounded-xl rounded-tl-none px-3 py-2.5 text-sm text-slate-700 leading-relaxed">
+              The last wall I added was <strong>Interior Wall B-C</strong> (element ID <code class="bg-slate-200 text-slate-700 px-1 py-0.5 rounded text-xs">elem_4f91a</code>), a 3-metre IfcWallStandardCase between axes B and C.
+            </div>
+
+            <!-- Tool-call toggle — present but expands to "No tool calls" -->
+            <button
+              onclick="toggleToolCalls('tc4')"
+              class="mt-1.5 flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 transition-colors group"
+              aria-expanded="false"
+              aria-controls="tc4"
+              id="tc4-btn"
+            >
+              <svg class="w-3 h-3 transition-transform duration-200" id="tc4-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <svg class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span>Show tool calls</span>
+              <span class="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full text-[10px] font-medium">0</span>
+            </button>
+
+            <div id="tc4" class="tool-detail mt-2" role="region" aria-label="Tool call details">
+              <div class="border border-slate-200 rounded-xl bg-white px-4 py-3 flex items-center gap-2 text-sm text-slate-500">
+                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 110 20 10 10 0 010-20z"/></svg>
+                No tool calls were made for this response
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="chatBottom"></div>
+      </div>
+
+      <!-- Chat input -->
+      <div class="flex-shrink-0 px-3 pb-3 pt-2 border-t border-slate-100">
+        <div class="flex items-end gap-2">
+          <textarea
+            rows="2"
+            placeholder="Describe a model change…"
+            class="flex-1 resize-none rounded-xl border border-slate-200 bg-white text-slate-900 text-sm placeholder-slate-400 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 leading-snug"
+            aria-label="Instruction input"
+            style="max-height:120px;"
+          ></textarea>
+          <button
+            aria-label="Send instruction"
+            class="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 text-white flex items-center justify-center hover:from-violet-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all duration-200"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7"/></svg>
+          </button>
+        </div>
+        <p class="text-xs text-slate-400 mt-1.5 px-1">
+          Instructions are checked for model relevance before execution.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE-SWITCHER TOOLBAR (mockup demo controls)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur border border-slate-200 rounded-2xl shadow-xl px-4 py-2.5 flex items-center gap-3 z-50 text-xs">
+    <span class="text-slate-500 font-medium mr-1">Demo states:</span>
+    <button onclick="showDemo('success')"      class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors font-medium">Success (2 calls)</button>
+    <button onclick="showDemo('failure')"       class="px-2.5 py-1 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition-colors font-medium">Partial Failure</button>
+    <button onclick="showDemo('noCalls')"       class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors font-medium">No Calls</button>
+    <button onclick="showDemo('collapseAll')"   class="px-2.5 py-1 rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors font-medium">Collapse All</button>
+  </div>
+
+  <script>
+    // ── Toggle tool-call disclosure ──────────────────────────
+
+    function toggleToolCalls(id) {
+      const detail  = document.getElementById(id);
+      const chevron = document.getElementById(id + '-chevron');
+      const btn     = document.getElementById(id + '-btn');
+      const isOpen  = detail.classList.contains('open');
+
+      if (isOpen) {
+        detail.classList.remove('open');
+        chevron.style.transform = 'rotate(0deg)';
+        btn.setAttribute('aria-expanded', 'false');
+        btn.querySelector('span').textContent = 'Show tool calls';
+      } else {
+        detail.classList.add('open');
+        chevron.style.transform = 'rotate(90deg)';
+        btn.setAttribute('aria-expanded', 'true');
+        btn.querySelector('span').textContent = 'Hide tool calls';
+      }
+    }
+
+    // ── Demo state buttons ───────────────────────────────────
+
+    function collapseAll() {
+      ['tc1', 'tc2', 'tc4'].forEach(function (id) {
+        var detail  = document.getElementById(id);
+        var chevron = document.getElementById(id + '-chevron');
+        var btn     = document.getElementById(id + '-btn');
+        if (detail && detail.classList.contains('open')) {
+          detail.classList.remove('open');
+          chevron.style.transform = 'rotate(0deg)';
+          btn.setAttribute('aria-expanded', 'false');
+          btn.querySelector('span').textContent = 'Show tool calls';
+        }
+      });
+    }
+
+    function showDemo(state) {
+      collapseAll();
+
+      if (state === 'success') {
+        toggleToolCalls('tc1');
+        document.getElementById('exchange1').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (state === 'failure') {
+        toggleToolCalls('tc2');
+        document.getElementById('exchange2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (state === 'noCalls') {
+        toggleToolCalls('tc4');
+        document.getElementById('exchange4').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      // collapseAll already handles the 'collapseAll' state
+    }
+  </script>
+</body>
+</html>

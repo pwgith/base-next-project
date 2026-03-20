@@ -1,0 +1,140 @@
+paths:
+  /ifc/files/{fileId}/download:
+    parameters:
+      - $ref: '../schemas/common.yaml#/FileIdParam'
+
+    get:
+      operationId: downloadFile
+      summary: Download IFC file
+      description: |
+        Downloads the current version of the IFC model as a STEP file.
+        Returns raw binary content with a `Content-Disposition` header.
+
+        **Required scope:** `ifc:read`
+      tags:
+        - IFC Export
+      responses:
+        '200':
+          description: IFC STEP file download
+          headers:
+            Content-Disposition:
+              description: Attachment filename
+              schema:
+                type: string
+                example: 'attachment; filename="a1b2c3d4.ifc"'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '../schemas/common.yaml#/UnauthorizedError'
+        '403':
+          $ref: '../schemas/common.yaml#/ForbiddenError'
+        '404':
+          $ref: '../schemas/common.yaml#/NotFoundError'
+        '500':
+          $ref: '../schemas/common.yaml#/InternalError'
+
+  /ifc/files/{fileId}/export:
+    parameters:
+      - $ref: '../schemas/common.yaml#/FileIdParam'
+
+    get:
+      operationId: exportFile
+      summary: Export IFC file
+      description: |
+        Exports the full IFC model in the specified format. Supported
+        formats include "ifc" (STEP), and potentially others.
+        Returns raw binary content.
+
+        **Required scope:** `ifc:read`
+      tags:
+        - IFC Export
+      parameters:
+        - name: format
+          in: query
+          description: Export format (default "ifc")
+          schema:
+            type: string
+            default: ifc
+            example: ifc
+      responses:
+        '200':
+          description: Exported file download
+          headers:
+            Content-Disposition:
+              description: Attachment filename with version and format
+              schema:
+                type: string
+                example: 'attachment; filename="MyProject_v3.ifc"'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '../schemas/common.yaml#/ValidationError'
+        '401':
+          $ref: '../schemas/common.yaml#/UnauthorizedError'
+        '403':
+          $ref: '../schemas/common.yaml#/ForbiddenError'
+        '404':
+          $ref: '../schemas/common.yaml#/NotFoundError'
+        '500':
+          $ref: '../schemas/common.yaml#/InternalError'
+
+    post:
+      operationId: exportFileSubset
+      summary: Export a subset of elements
+      description: |
+        Exports a subset of elements from the IFC model. Provide an
+        array of GlobalIds to include only those elements in the export.
+        If no GlobalIds are provided, exports the full model.
+
+        **Required scope:** `ifc:read`
+      tags:
+        - IFC Export
+      parameters:
+        - name: format
+          in: query
+          description: Export format (default "ifc")
+          schema:
+            type: string
+            default: ifc
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                globalIds:
+                  type: array
+                  items:
+                    type: string
+                  description: GlobalIds of elements to include in the export
+      responses:
+        '200':
+          description: Exported file download
+          headers:
+            Content-Disposition:
+              description: Attachment filename
+              schema:
+                type: string
+                example: 'attachment; filename="MyProject_v3.ifc"'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '../schemas/common.yaml#/ValidationError'
+        '401':
+          $ref: '../schemas/common.yaml#/UnauthorizedError'
+        '403':
+          $ref: '../schemas/common.yaml#/ForbiddenError'
+        '404':
+          $ref: '../schemas/common.yaml#/NotFoundError'
+        '500':
+          $ref: '../schemas/common.yaml#/InternalError'

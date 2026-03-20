@@ -1,0 +1,109 @@
+// This is the Prisma schema for the application.
+// See: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth Module ──────────────────────────────────────────────────────────────
+
+/// Application profile linked 1-to-1 with a Supabase auth user.
+model Profile {
+  id             String   @id @default(uuid())
+  supabaseUserId String   @unique @map("supabase_user_id")
+  displayName    String   @map("display_name")
+  email          String   @unique
+  version        Int      @default(1)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("profile")
+}
+
+// ─── Core Module ─────────────────────────────────────────────────────────────
+
+// ─── Subscription Module ──────────────────────────────────────────────────────
+
+/// Tracks the current subscription plan for a profile. One row per profile.
+model Subscription {
+  id                   String                       @id @default(uuid())
+  profileId            String                       @unique @map("profile_id")
+  stripeCustomerId     String?                      @unique @map("stripe_customer_id")
+  stripeSubscriptionId String?                      @unique @map("stripe_subscription_id")
+  plan                 String                       // 'free' | 'hobby' | 'investor'
+  status               String                       @default("inactive") // 'active' | 'past_due' | 'canceled' | 'inactive'
+  currentPeriodStart   DateTime?                    @map("current_period_start")
+  currentPeriodEnd     DateTime?                    @map("current_period_end")
+  version              Int                          @default(1)
+  createdAt            DateTime                     @default(now()) @map("created_at")
+  updatedAt            DateTime                     @updatedAt @map("updated_at")
+
+  scheduledChange      SubscriptionScheduledChange?
+
+  @@map("subscription")
+}
+
+/// Holds at most one pending downgrade or cancellation per subscription.
+model SubscriptionScheduledChange {
+  id             String       @id @default(uuid())
+  subscriptionId String       @unique @map("subscription_id")
+  changeType     String       @map("change_type")  // 'downgrade' | 'cancel'
+  targetPlan     String       @map("target_plan")  // 'free' | 'hobby' | 'investor'
+  effectiveAt    DateTime     @map("effective_at")
+  version        Int          @default(1)
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  subscription  Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@map("subscription_scheduled_change")
+}
+
+/// Idempotency table — records every Stripe event ID that has been successfully processed.
+model ProcessedStripeEvent {
+  id             String   @id @default(uuid())
+  stripeEventId  String   @unique @map("stripe_event_id")
+  processedAt    DateTime @default(now()) @map("processed_at")
+
+  @@map("processed_stripe_event")
+}
+
+// ─── Core Module ─────────────────────────────────────────────────────────────
+
+// ─── IFC Module ───────────────────────────────────────────────────────────────
+
+/// Top-level container for a user's IFC building model project.
+/// Each project owns an independently versioned IFC model stored in ifc_version.
+model IfcProject {
+  id          String   @id @default(uuid())
+  profileId   String   @map("profile_id")
+  name        String
+  description String?
+  version     Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  ifcVersions IfcVersion[]
+
+  @@unique([profileId, name])
+  @@map("ifc_project")
+}
+
+/// Immutable snapshot of the full IFC model at a given version number.
+/// The current model state is the row with the highest versionNumber for a project.
+model IfcVersion {
+  id            String   @id @default(uuid())
+  projectId     String   @map("project_id")
+  versionNumber Int      @map("version_number")
+  data          Json
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  project IfcProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, versionNumber])
+  @@map("ifc_version")
+}

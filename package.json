@@ -1,0 +1,74 @@
+{
+  "name": "model",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "stop": "npx kill-port 3000",
+    "prestart": "npm run stop",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "npx jest --config jest.config.ts",
+    "test:integration": "npx jest --config jest.config.ts test/support/application.integration.test.ts",
+    "test:cucumber": "npx tsx ./node_modules/@cucumber/cucumber/bin/cucumber-js",
+    "test:cucumber:f001": "npx tsx ./node_modules/@cucumber/cucumber/bin/cucumber-js --tags @F-001",
+    "stripe-cli": "c:/Tools/stripe.exe listen --latest --forward-to localhost:3000/api/subscription/webhook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pwgith/base-next-project.git"
+  },
+  "keywords": [
+    "trades",
+    "calculator",
+    "flooring",
+    "materials",
+    "room-calculator"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pwgith/base-next-project/issues"
+  },
+  "homepage": "https://github.com/pwgith/base-next-project#readme",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "@supabase/supabase-js": "^2.98.0",
+    "@thatopen/components": "^3.3.3",
+    "@thatopen/fragments": "^3.3.6",
+    "next": "^16.1.6",
+    "openai": "^6.32.0",
+    "pg": "^8.20.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "stripe": "^20.4.0",
+    "three": "^0.183.2",
+    "web-ifc": "^0.0.77"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.7.0",
+    "@tailwindcss/postcss": "^4.2.1",
+    "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^25.3.3",
+    "@types/pg": "^8.18.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.183.1",
+    "eslint": "^9.39.3",
+    "eslint-config-next": "^16.1.6",
+    "jest": "^30.2.0",
+    "js-yaml": "^4.1.1",
+    "playwright": "^1.58.2",
+    "postcss": "^8.5.6",
+    "prisma": "^7.4.2",
+    "tailwindcss": "^4.2.1",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,919 @@
+[
+  {
+    "description": "  As the system\n  I want to receive and process Stripe webhook events\n  So that the application's subscription state stays in sync with Stripe",
+    "elements": [
+      {
+        "description": "",
+        "id": "process-stripe-webhook;valid-checkout.session.completed-webhook-activates-a-new-paid-subscription",
+        "keyword": "Scenario",
+        "line": 8,
+        "name": "Valid checkout.session.completed webhook activates a new paid subscription",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 537835700
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1944850299
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 9,
+            "name": "a user profile exists with Stripe customer ID \"cus_ABC123\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:183"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2365834299
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "the user is on the \"Free\" plan",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:206"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 239667300
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 11,
+            "name": "Stripe sends a valid \"checkout.session.completed\" webhook for customer \"cus_ABC123\" with plan \"Hobby\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:282"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 500348799
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 12,
+            "name": "the user's subscription is updated to \"Hobby\" with status \"active\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:478"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 75486799
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 13,
+            "name": "the Stripe subscription ID is recorded against the user's profile",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:496"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 82074700
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 115498100
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@F-014",
+            "line": 1
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 1
+          },
+          {
+            "name": "@S-090",
+            "line": 7
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 7
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "process-stripe-webhook;valid-customer.subscription.updated-webhook-records-a-scheduled-downgrade",
+        "keyword": "Scenario",
+        "line": 16,
+        "name": "Valid customer.subscription.updated webhook records a scheduled downgrade",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 171798199
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 231208599
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 17,
+            "name": "a user profile exists with Stripe customer ID \"cus_ABC123\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:183"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 686885500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 18,
+            "name": "the user is subscribed to the \"Investor\" plan",
+            "match": {
+              "location": "test\\step-definitions\\subscriptionCommon.steps.ts:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 302925999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 19,
+            "name": "Stripe sends a valid \"customer.subscription.updated\" webhook for customer \"cus_ABC123\" indicating a downgrade to \"Hobby\" at \"2026-04-06\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:329"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 501000399
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "the user's current plan remains \"Investor\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:508"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 77312799
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 21,
+            "name": "a downgrade to \"Hobby\" is recorded as scheduled for \"2026-04-06\"",
+            "match": {
+              "location": "test\\step-definitions\\downgradeSubscription.steps.ts:190"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 60066399
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 54173899
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@F-014",
+            "line": 1
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 1
+          },
+          {
+            "name": "@S-091",
+            "line": 15
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 15
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "process-stripe-webhook;valid-customer.subscription.updated-webhook-records-a-pending-cancellation",
+        "keyword": "Scenario",
+        "line": 24,
+        "name": "Valid customer.subscription.updated webhook records a pending cancellation",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 144486999
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 191267700
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 25,
+            "name": "a user profile exists with Stripe customer ID \"cus_ABC123\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:183"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 568195099
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 26,
+            "name": "the user is subscribed to the \"Hobby\" plan",
+            "match": {
+              "location": "test\\step-definitions\\subscriptionCommon.steps.ts:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 189182699
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 27,
+            "name": "Stripe sends a valid \"customer.subscription.updated\" webhook for customer \"cus_ABC123\" indicating cancellation at \"2026-04-06\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:367"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 516541400
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 28,
+            "name": "the user's current plan remains \"Hobby\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:508"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 69867499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 29,
+            "name": "a cancellation is recorded as scheduled for \"2026-04-06\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:522"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 82637600
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 691907100
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@F-014",
+            "line": 1
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 1
+          },
+          {
+            "name": "@S-092",
+            "line": 23
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 23
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "process-stripe-webhook;valid-customer.subscription.deleted-webhook-reverts-the-user-to-the-free-plan",
+        "keyword": "Scenario",
+        "line": 32,
+        "name": "Valid customer.subscription.deleted webhook reverts the user to the Free plan",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 156190200
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 161981499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 33,
+            "name": "a user profile exists with Stripe customer ID \"cus_ABC123\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:183"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 559946799
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 34,
+            "name": "the user is subscribed to the \"Hobby\" plan with a pending cancellation",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:216"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 235002899
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 35,
+            "name": "Stripe sends a valid \"customer.subscription.deleted\" webhook for customer \"cus_ABC123\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:397"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 453307500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 36,
+            "name": "the user's plan is updated to \"Free\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:546"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 85797200
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 37,
+            "name": "the subscription status is set to \"inactive\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:556"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 63005699
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 58414299
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@F-014",
+            "line": 1
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 1
+          },
+          {
+            "name": "@S-093",
+            "line": 31
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 31
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "process-stripe-webhook;webhook-with-an-invalid-signature-is-rejected-without-modifying-state",
+        "keyword": "Scenario",
+        "line": 40,
+        "name": "Webhook with an invalid signature is rejected without modifying state",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 145760399
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 216593499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 41,
+            "name": "the application has a configured Stripe webhook secret",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:237"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 488600
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 42,
+            "name": "Stripe sends a webhook with an invalid signature",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:441"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 24444199
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 43,
+            "name": "the system returns HTTP 400",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:566"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 421500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 44,
+            "name": "no subscription state is changed",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:575"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 72425700
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 56345799
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@F-014",
+            "line": 1
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 1
+          },
+          {
+            "name": "@S-094",
+            "line": 39
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 39
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "process-stripe-webhook;duplicate-webhook-event-is-ignored-after-already-being-processed",
+        "keyword": "Scenario",
+        "line": 47,
+        "name": "Duplicate webhook event is ignored after already being processed",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 160608100
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 289590999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 48,
+            "name": "a user profile exists with Stripe customer ID \"cus_ABC123\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:183"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 516526399
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 49,
+            "name": "the \"checkout.session.completed\" event with ID \"evt_001\" has already been processed for this customer",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:242"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 245483599
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 50,
+            "name": "Stripe resends the \"checkout.session.completed\" webhook with event ID \"evt_001\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:456"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 40339099
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 51,
+            "name": "the system returns HTTP 200",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:566"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 139299
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 52,
+            "name": "no duplicate subscription record is created",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:588"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 104298599
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 61362000
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@F-014",
+            "line": 1
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 1
+          },
+          {
+            "name": "@S-095",
+            "line": 46
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 46
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "process-stripe-webhook;unrecognised-stripe-customer-id-in-webhook-is-acknowledged-without-state-change",
+        "keyword": "Scenario",
+        "line": 55,
+        "name": "Unrecognised Stripe customer ID in webhook is acknowledged without state change",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 147006100
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 196452499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 56,
+            "name": "no user profile exists for Stripe customer ID \"cus_UNKNOWN\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:262"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 239800
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 57,
+            "name": "Stripe sends a valid \"checkout.session.completed\" webhook for customer \"cus_UNKNOWN\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:397"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 182226099
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 58,
+            "name": "the system returns HTTP 200",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:566"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 171200
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 59,
+            "name": "no subscription state is changed",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:575"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 54737700
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 48746800
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@F-014",
+            "line": 1
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 1
+          },
+          {
+            "name": "@S-096",
+            "line": 54
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 54
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "process-stripe-webhook;checkout.session.completed-with-an-unrecognised-price-id-does-not-revert-plan-to-free",
+        "keyword": "Scenario",
+        "line": 62,
+        "name": "checkout.session.completed with an unrecognised price ID does not revert plan to Free",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 153388700
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 218330700
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 63,
+            "name": "a user profile exists with Stripe customer ID \"cus_ABC123\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:183"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 557468600
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 64,
+            "name": "the user is subscribed to the \"Hobby\" plan",
+            "match": {
+              "location": "test\\step-definitions\\subscriptionCommon.steps.ts:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 286911899
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 65,
+            "name": "Stripe sends a \"checkout.session.completed\" webhook for customer \"cus_ABC123\" with an unrecognised price ID",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:608"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 228835500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 66,
+            "name": "the user's subscription remains \"Hobby\"",
+            "match": {
+              "location": "test\\step-definitions\\processStripeWebhook.steps.ts:644"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 74097200
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 50741699
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@F-014",
+            "line": 1
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 1
+          },
+          {
+            "name": "@S-098",
+            "line": 61
+          },
+          {
+            "name": "@UC-SYS-001",
+            "line": 61
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "process-stripe-webhook",
+    "line": 2,
+    "keyword": "Feature",
+    "name": "Process Stripe webhook",
+    "tags": [
+      {
+        "name": "@F-014",
+        "line": 1
+      },
+      {
+        "name": "@UC-SYS-001",
+        "line": 1
+      }
+    ],
+    "uri": "specification\\features\\subscription\\processStripeWebhook.feature"
+  }
+]
