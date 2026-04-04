@@ -74,36 +74,4 @@ model ProcessedStripeEvent {
 
 // ─── Core Module ─────────────────────────────────────────────────────────────
 
-// ─── IFC Module ───────────────────────────────────────────────────────────────
 
-/// Top-level container for a user's IFC building model project.
-/// Each project owns an independently versioned IFC model stored in ifc_version.
-model IfcProject {
-  id          String   @id @default(uuid())
-  profileId   String   @map("profile_id")
-  name        String
-  description String?
-  version     Int      @default(1)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  ifcVersions IfcVersion[]
-
-  @@unique([profileId, name])
-  @@map("ifc_project")
-}
-
-/// Immutable snapshot of the full IFC model at a given version number.
-/// The current model state is the row with the highest versionNumber for a project.
-model IfcVersion {
-  id            String   @id @default(uuid())
-  projectId     String   @map("project_id")
-  versionNumber Int      @map("version_number")
-  data          Json
-  createdAt     DateTime @default(now()) @map("created_at")
-
-  project IfcProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@unique([projectId, versionNumber])
-  @@map("ifc_version")
-}

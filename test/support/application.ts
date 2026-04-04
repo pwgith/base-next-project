@@ -1,6 +1,4 @@
-import { Browser, BrowserContext, Page, chromium } from "playwright";
-import type { ToolCallDetail } from "@/types/aiChat";
-import { PlansPage } from "./pages/plansPage";
+﻿import { Browser, BrowserContext, Page, chromium } from "playwright";
 import { LoginPage } from "./pages/loginPage";
 import { SignUpPage } from "./pages/signUpPage";
 import { TopNavPage } from "./pages/topNavPage";
@@ -8,15 +6,11 @@ import { SubscriptionPlansPage } from "./pages/subscriptionPlansPage";
 import { ChangePasswordPage } from "./pages/changePasswordPage";
 import { ChangeEmailPage } from "./pages/changeEmailPage";
 import { ResetPasswordPage } from "./pages/resetPasswordPage";
-import { IfcWorkspacePage } from "./pages/ifcWorkspacePage";
-import { AiChatPanelPage } from "./pages/aiChatPanelPage";
-import path from "path";
 
 export class Application {
   private browser!: Browser;
   private context!: BrowserContext;
   private page!: Page;
-  private plansPage!: PlansPage;
   private loginPage!: LoginPage;
   private signUpPage!: SignUpPage;
   private topNavPage!: TopNavPage;
@@ -24,14 +18,11 @@ export class Application {
   private changePasswordPage!: ChangePasswordPage;
   private changeEmailPage!: ChangeEmailPage;
   private resetPasswordPage!: ResetPasswordPage;
-  private ifcWorkspacePage!: IfcWorkspacePage;
-  private aiChatPanelPage!: AiChatPanelPage;
 
   async launch(): Promise<void> {
     this.browser = await chromium.launch();
     this.context = await this.browser.newContext();
     this.page = await this.context.newPage();
-    this.plansPage = new PlansPage(this.page);
     this.loginPage = new LoginPage(this.page);
     this.signUpPage = new SignUpPage(this.page);
     this.topNavPage = new TopNavPage(this.page);
@@ -39,8 +30,6 @@ export class Application {
     this.changePasswordPage = new ChangePasswordPage(this.page);
     this.changeEmailPage = new ChangeEmailPage(this.page);
     this.resetPasswordPage = new ResetPasswordPage(this.page);
-    this.ifcWorkspacePage = new IfcWorkspacePage(this.page);
-    this.aiChatPanelPage = new AiChatPanelPage(this.page);
   }
 
   async close(): Promise<void> {
@@ -52,19 +41,19 @@ export class Application {
     return this.page.url();
   }
 
-  // ─── Viewport ───────────────────────────────────────────────
+  // â”€â”€â”€ Viewport â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-  /** Set the browser viewport to a desktop size (1280 × 800). */
+  /** Set the browser viewport to a desktop size (1280 Ã— 800). */
   async setViewportToDesktop(): Promise<void> {
     await this.topNavPage.setDesktopViewport();
   }
 
-  /** Set the browser viewport to a mobile size (375 × 812). */
+  /** Set the browser viewport to a mobile size (375 Ã— 812). */
   async setViewportToMobile(): Promise<void> {
     await this.topNavPage.setMobileViewport();
   }
 
-  // ─── Sign in (composite) ────────────────────────────────────
+  // â”€â”€â”€ Sign in (composite) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /**
    * Navigate to the login page, sign in with the given credentials, and wait
@@ -83,7 +72,7 @@ export class Application {
     await this.page.waitForTimeout(500);
   }
 
-  // ─── User menu (desktop) ────────────────────────────────────
+  // â”€â”€â”€ User menu (desktop) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Open the desktop account dropdown menu. */
   async openAccountMenu(): Promise<void> {
@@ -127,7 +116,7 @@ export class Application {
     await this.page.waitForTimeout(200);
   }
 
-  // ─── User menu (mobile) ─────────────────────────────────────
+  // â”€â”€â”€ User menu (mobile) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Tap the hamburger button to open the mobile navigation panel. */
   async openHamburgerMenu(): Promise<void> {
@@ -154,12 +143,7 @@ export class Application {
     return this.topNavPage.isMobileNavLinkVisible(label);
   }
 
-  // ─── Navigation ────────────────────────────────────────────
-
-  /** Navigate to the Plans page. */
-  async navigateToPlans(): Promise<void> {
-    await this.plansPage.goto();
-  }
+  // â”€â”€â”€ Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Navigate to the Login page. */
   async navigateToLogin(): Promise<void> {
@@ -235,7 +219,7 @@ export class Application {
     return url.searchParams.get("redirectTo");
   }
 
-  // ─── Login ─────────────────────────────────────────────────
+  // â”€â”€â”€ Login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Fill and submit the login form. */
   async fillAndSubmitLogin(email: string, password: string): Promise<void> {
@@ -257,7 +241,7 @@ export class Application {
     return this.loginPage.isVerificationSuccessBannerVisible();
   }
 
-  // ─── Sign-Up ───────────────────────────────────────────────
+  // â”€â”€â”€ Sign-Up â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Fill the sign-up email field. */
   async fillSignUpEmail(email: string): Promise<void> {
@@ -319,7 +303,7 @@ export class Application {
     return this.signUpPage.isEmailErrorVisible(partialText);
   }
 
-  // ─── Upload ────────────────────────────────────────────────
+  // â”€â”€â”€ Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Upload a floor plan image file by filename (relative to test/test-data/). */
   async uploadFloorPlan(fileName: string): Promise<void> {
@@ -354,7 +338,7 @@ export class Application {
     return await this.plansPage.isPreviewVisible(fileName);
   }
 
-  // ─── Roof Height ───────────────────────────────────────────
+  // â”€â”€â”€ Roof Height â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Get the value currently shown in the roof height field. */
   async getRoofHeight(): Promise<string> {
@@ -366,7 +350,7 @@ export class Application {
     await this.plansPage.setRoofHeight(value);
   }
 
-  // ─── Submit ────────────────────────────────────────────────
+  // â”€â”€â”€ Submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Click the "Analyse Floor Plan" button to confirm the upload. */
   async confirmUpload(): Promise<void> {
@@ -378,7 +362,7 @@ export class Application {
     await this.plansPage.clickAnalyse();
   }
 
-  // ─── Results ───────────────────────────────────────────────
+  // â”€â”€â”€ Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Wait for analysis to complete and results to be visible. */
   async waitForResults(): Promise<void> {
@@ -439,7 +423,7 @@ export class Application {
     return await this.plansPage.getRoomDiagramLabels(roomName);
   }
 
-  // ─── Downloads ─────────────────────────────────────────────
+  // â”€â”€â”€ Downloads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Download the analysis as JSON. */
   async downloadJson(): Promise<string> {
@@ -451,7 +435,7 @@ export class Application {
     return await this.plansPage.downloadSpreadsheet();
   }
 
-  // ─── Errors & Validation ──────────────────────────────────
+  // â”€â”€â”€ Errors & Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Check if a format error is displayed. */
   async getFormatError(): Promise<string | null> {
@@ -473,11 +457,11 @@ export class Application {
     return await this.plansPage.isUploadFormVisible();
   }
 
-  // ─── Composite helpers ─────────────────────────────────────
+  // â”€â”€â”€ Composite helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /**
    * Upload a floor plan and wait for analysis to finish using the real AI API.
-   * No mocking — the request goes through to the actual /api/analyse endpoint.
+   * No mocking â€” the request goes through to the actual /api/analyse endpoint.
    */
   async uploadAndAnalyse(
     fileName: string,
@@ -491,7 +475,7 @@ export class Application {
     await this.plansPage.waitForResultsOrError();
   }
 
-  // ─── Subscription ──────────────────────────────────────────────────────────
+  // â”€â”€â”€ Subscription â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Navigate to the Subscription Plans page. */
   async navigateToSubscription(): Promise<void> {
@@ -516,7 +500,7 @@ export class Application {
   async verifyStripePlanPrice(plan: "free" | "hobby" | "investor", expectedPrice: string): Promise<void> {
     const res = await fetch("http://localhost:3000/api/subscription/prices");
     if (!res.ok) {
-      throw new Error(`Prices API returned ${res.status} — is the app running?`);
+      throw new Error(`Prices API returned ${res.status} â€” is the app running?`);
     }
     const json = (await res.json()) as { data: Record<string, string> };
     const actual = json.data[plan];
@@ -584,7 +568,7 @@ export class Application {
     return this.subscriptionPlansPage.isManageBillingVisible();
   }
 
-  // ─── Change Password ────────────────────────────────────────────────────
+  // â”€â”€â”€ Change Password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Navigate to the Change Password page. */
   async navigateToChangePassword(): Promise<void> {
@@ -636,7 +620,7 @@ export class Application {
     return this.changePasswordPage.isSuccessVisible();
   }
 
-  // ─── Change Email ────────────────────────────────────────────────────────
+  // â”€â”€â”€ Change Email â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Navigate to the Change Email page. */
   async navigateToChangeEmail(): Promise<void> {
@@ -688,7 +672,7 @@ export class Application {
     return this.changeEmailPage.isVerificationSentVisible();
   }
 
-  // ─── Reset Password ──────────────────────────────────────────────────────
+  // â”€â”€â”€ Reset Password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /** Navigate to the Reset Password request page. */
   async navigateToResetPassword(): Promise<void> {
@@ -743,7 +727,7 @@ export class Application {
     await this.resetPasswordPage.clickRequestNewLink();
   }
 
-  // ─── Sign-out ───────────────────────────────────────────────────────────
+  // â”€â”€â”€ Sign-out â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /**
    * Sign the current user out via the account menu and wait for the /login
@@ -772,286 +756,5 @@ export class Application {
   async getLoginPageErrorText(): Promise<string | null> {
     return this.loginPage.getErrorText();
   }
-
-  // ─── IFC Workspace / Viewer ─────────────────────────────────────────────
-
-  /** Navigate to the workspace page for a given project ID. */
-  async navigateToWorkspace(projectId: string): Promise<void> {
-    await this.ifcWorkspacePage.goto(projectId);
-  }
-
-  /** Wait for the IFC model to finish loading (loading overlay disappears). */
-  async waitForModelLoaded(): Promise<void> {
-    await this.ifcWorkspacePage.waitForModelLoaded();
-  }
-
-  /** Wait for the Three.js canvas to appear. */
-  async waitForCanvas(): Promise<void> {
-    await this.ifcWorkspacePage.waitForCanvas();
-  }
-
-  /** Returns true if the loading indicator is currently visible. */
-  async isWorkspaceLoadingVisible(): Promise<boolean> {
-    return this.ifcWorkspacePage.isLoadingVisible();
-  }
-
-  /** Returns true if the Three.js canvas is rendered in the viewport. */
-  async isCanvasVisible(): Promise<boolean> {
-    return this.ifcWorkspacePage.isCanvasVisible();
-  }
-
-  /** Returns true if the "No visible geometry" empty state overlay is visible. */
-  async isEmptyModelOverlayVisible(): Promise<boolean> {
-    return this.ifcWorkspacePage.isEmptyOverlayVisible();
-  }
-
-  /** Waits until the viewer reaches a terminal state (loaded, empty, or error). */
-  async waitForTerminalViewerState(): Promise<void> {
-    return this.ifcWorkspacePage.waitForTerminalState();
-  }
-
-  /** Returns the current viewer state from data-viewer-state attribute (debug). */
-  async getViewerState(): Promise<string | null> {
-    return this.ifcWorkspacePage.getViewerState();
-  }
-
-  /** Returns true if the fetch-error overlay is visible. */
-  async isFetchErrorVisible(): Promise<boolean> {
-    return this.ifcWorkspacePage.isErrorFetchVisible();
-  }
-
-  /** Returns true if the conversion-error overlay is visible. */
-  async isConversionErrorVisible(): Promise<boolean> {
-    return this.ifcWorkspacePage.isErrorConvertVisible();
-  }
-
-  /** Returns true if the retry button is visible in the error overlay. */
-  async isRetryOptionVisible(): Promise<boolean> {
-    return this.ifcWorkspacePage.isRetryVisible();
-  }
-
-  /** Returns true if the "Back to projects" link is visible. */
-  async isBackToProjectsVisible(): Promise<boolean> {
-    return this.ifcWorkspacePage.isBackToProjectsLinkVisible();
-  }
-
-  /** Click the reset-camera toolbar button. */
-  async resetCamera(): Promise<void> {
-    await this.ifcWorkspacePage.clickResetCamera();
-  }
-
-  /** Click the reload toolbar button. */
-  async reloadViewer(): Promise<void> {
-    await this.ifcWorkspacePage.clickReload();
-  }
-
-  /** Orbit the camera by dragging in the viewport. */
-  async orbitCamera(dx: number, dy: number): Promise<void> {
-    await this.ifcWorkspacePage.orbitCamera(dx, dy);
-  }
-
-  /** Pan the camera by right-click dragging in the viewport. */
-  async panCamera(dx: number, dy: number): Promise<void> {
-    await this.ifcWorkspacePage.panCamera(dx, dy);
-  }
-
-  /** Scroll the mouse wheel in the viewport. */
-  async scrollWheelInViewport(deltaY: number): Promise<void> {
-    await this.ifcWorkspacePage.scrollWheel(deltaY);
-  }
-
-  /** Returns the project name displayed in the workspace nav bar. */
-  async getWorkspaceProjectName(): Promise<string> {
-    return this.ifcWorkspacePage.getProjectName();
-  }
-
-  /** Returns the version text displayed in the workspace nav badge. */
-  async getWorkspaceVersionText(): Promise<string> {
-    return this.ifcWorkspacePage.getVersionText();
-  }
-
-  /** Returns true if the camera-reset toast is visible. */
-  async isCameraResetToastVisible(): Promise<boolean> {
-    return this.ifcWorkspacePage.isCameraResetToastVisible();
-  }
-
-  /** Mock the IFC file endpoint to return 404 (must call before navigation). */
-  async mockIfcFetch404(): Promise<void> {
-    await this.ifcWorkspacePage.mockIfcFetch404();
-  }
-
-  /** Mock the IFC file endpoint to return malformed data (must call before navigation). */
-  async mockIfcFetchMalformed(): Promise<void> {
-    await this.ifcWorkspacePage.mockIfcFetchMalformed();
-  }
-
-  /** Clear any IFC fetch mocks. */
-  async clearIfcFetchMock(): Promise<void> {
-    await this.ifcWorkspacePage.clearIfcFetchMock();
-  }
-
-  // ─── AI Chat Panel ─────────────────────────────────────────────────────
-
-  /** Wait for the AI chat panel to be visible. */
-  async waitForChatPanel(): Promise<void> {
-    await this.aiChatPanelPage.waitForVisible();
-  }
-
-  /** Type an instruction and click send. */
-  async submitChatInstruction(text: string): Promise<void> {
-    await this.aiChatPanelPage.submitInstruction(text);
-  }
-
-  /** Wait for the assistant to finish responding. */
-  async waitForAssistantResponse(timeout?: number): Promise<void> {
-    await this.aiChatPanelPage.waitForAssistantResponse(timeout);
-  }
-
-  /** Returns the last assistant message text. */
-  async getLastAssistantMessage(): Promise<string> {
-    return this.aiChatPanelPage.getLastAssistantMessage();
-  }
-
-  /** Returns all assistant messages. */
-  async getAssistantMessages(): Promise<string[]> {
-    return this.aiChatPanelPage.getAssistantMessages();
-  }
-
-  /** Returns all user messages. */
-  async getUserMessages(): Promise<string[]> {
-    return this.aiChatPanelPage.getUserMessages();
-  }
-
-  /** Returns the variant (success/warning/error/neutral) of the last assistant message. */
-  async getLastAssistantMessageVariant(): Promise<string> {
-    return this.aiChatPanelPage.getLastAssistantMessageVariant();
-  }
-
-  /** Returns true if the chat input is enabled. */
-  async isChatInputReady(): Promise<boolean> {
-    return this.aiChatPanelPage.isInputEnabled();
-  }
-
-  /** Returns true if the "Checking relevance…" indicator is visible. */
-  async isCheckingRelevanceVisible(): Promise<boolean> {
-    return this.aiChatPanelPage.isCheckingRelevanceVisible();
-  }
-
-  /** Returns true if the "Executing…" indicator is visible. */
-  async isExecutingVisible(): Promise<boolean> {
-    return this.aiChatPanelPage.isExecutingVisible();
-  }
-
-  /** Clear the chat history. */
-  async clearChatHistory(): Promise<void> {
-    await this.aiChatPanelPage.clearChat();
-  }
-
-  /** Returns the count of assistant messages. */
-  async getAssistantMessageCount(): Promise<number> {
-    return this.aiChatPanelPage.getAssistantMessageCount();
-  }
-
-  /** Mock the relevance endpoint to return a fixed response. */
-  async mockRelevanceEndpoint(
-    response: { relevant: boolean; reason?: string },
-    statusCode?: number,
-  ): Promise<void> {
-    await this.aiChatPanelPage.mockRelevanceEndpoint(response, statusCode);
-  }
-
-  /** Mock the execute endpoint to return a fixed response. */
-  async mockExecuteEndpoint(
-    response: { reply: string; newVersion?: number; partialFailure?: boolean; toolCalls?: ToolCallDetail[] | null },
-    statusCode?: number,
-  ): Promise<void> {
-    await this.aiChatPanelPage.mockExecuteEndpoint(response, statusCode);
-  }
-
-  /** Mock the relevance endpoint to return a 502 error. */
-  async mockRelevanceUnavailable(): Promise<void> {
-    await this.aiChatPanelPage.mockRelevanceUnavailable();
-  }
-
-  /** Mock the execute endpoint to return a 502 error. */
-  async mockExecuteUnavailable(): Promise<void> {
-    await this.aiChatPanelPage.mockExecuteUnavailable();
-  }
-
-  /** Clear all AI endpoint mocks. */
-  async clearAiMocks(): Promise<void> {
-    await this.aiChatPanelPage.clearAiMocks();
-  }
-
-  // ─── Tool Call Inspection ─────────────────────────────────────────────────
-
-  /** Returns true if the "Show tool calls" toggle is visible on the last assistant message. */
-  async isToolCallToggleVisible(): Promise<boolean> {
-    return this.aiChatPanelPage.isToolCallToggleVisible();
-  }
-
-  /** Click the "Show tool calls" / "Hide tool calls" toggle on the last assistant message. */
-  async toggleToolCalls(): Promise<void> {
-    await this.aiChatPanelPage.toggleToolCalls();
-  }
-
-  /** Returns true if the tool-calls detail section is visible. */
-  async isToolCallSectionVisible(): Promise<boolean> {
-    return this.aiChatPanelPage.isToolCallSectionVisible();
-  }
-
-  /** Returns the number of tool call items displayed. */
-  async getToolCallCount(): Promise<number> {
-    return this.aiChatPanelPage.getToolCallCount();
-  }
-
-  /** Returns the HTTP method of the nth tool call. */
-  async getToolCallMethod(index: number): Promise<string> {
-    return this.aiChatPanelPage.getToolCallMethod(index);
-  }
-
-  /** Returns the path of the nth tool call. */
-  async getToolCallPath(index: number): Promise<string> {
-    return this.aiChatPanelPage.getToolCallPath(index);
-  }
-
-  /** Returns the status code of the nth tool call. */
-  async getToolCallStatusCode(index: number): Promise<string> {
-    return this.aiChatPanelPage.getToolCallStatusCode(index);
-  }
-
-  /** Returns the duration text of the nth tool call. */
-  async getToolCallDuration(index: number): Promise<string> {
-    return this.aiChatPanelPage.getToolCallDuration(index);
-  }
-
-  /** Returns true if the nth tool call is marked as an error. */
-  async isToolCallError(index: number): Promise<boolean> {
-    return this.aiChatPanelPage.isToolCallError(index);
-  }
-
-  /** Returns true if the nth tool call has a request payload section. */
-  async hasToolCallRequestPayload(index: number): Promise<boolean> {
-    return this.aiChatPanelPage.hasToolCallRequestPayload(index);
-  }
-
-  /** Returns true if the nth tool call has a response body section. */
-  async hasToolCallResponseBody(index: number): Promise<boolean> {
-    return this.aiChatPanelPage.hasToolCallResponseBody(index);
-  }
-
-  /** Returns the text content of the tool-calls section. */
-  async getToolCallSectionText(): Promise<string> {
-    return this.aiChatPanelPage.getToolCallSectionText();
-  }
-
-  /** Returns the request payload text of the nth tool call. */
-  async getToolCallRequestPayloadText(index: number): Promise<string> {
-    return this.aiChatPanelPage.getToolCallRequestPayloadText(index);
-  }
-
-  /** Returns the response body text of the nth tool call. */
-  async getToolCallResponseBodyText(index: number): Promise<string> {
-    return this.aiChatPanelPage.getToolCallResponseBodyText(index);
-  }
 }
+
