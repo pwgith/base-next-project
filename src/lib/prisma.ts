@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { getDatabaseUrl } from "./databaseConnectionUrls";
 import { encodeConnectionUrl } from "./encodeConnectionUrl";
 
 // Reuse a single Prisma client instance across hot-reloads in development.
@@ -11,7 +12,14 @@ declare global {
 }
 
 function createPrismaClient(): PrismaClient {
-  const connectionString = encodeConnectionUrl(process.env.DATABASE_URL);
+  const connectionString = encodeConnectionUrl(getDatabaseUrl(process.env));
+
+  if (!connectionString) {
+    throw new Error(
+      "Missing database connection configuration. Set DATABASE_URL or SUPABASE_PROJECT_REF plus SUPABASE_DB_PASSWORD.",
+    );
+  }
+
   const adapter = new PrismaPg({ connectionString });
   return new PrismaClient({
     adapter,

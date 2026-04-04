@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { defineConfig } from "prisma/config";
+import { getDatabaseUrl, getDirectDatabaseUrl } from "./src/lib/databaseConnectionUrls";
 
 // Next.js uses .env.local — load it explicitly for the Prisma CLI
 dotenv.config({ path: ".env.local" });
@@ -42,7 +43,7 @@ export default defineConfig({
   },
   datasource: {
     // Use the direct (non-pooled) URL for schema operations (db push, migrate)
-    url: encodeConnectionUrl(process.env.DIRECT_URL ?? process.env.DATABASE_URL),
+    url: encodeConnectionUrl(getDirectDatabaseUrl(process.env) ?? getDatabaseUrl(process.env)),
   },
 });
 
