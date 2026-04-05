@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ChangePasswordForm } from "@/components/auth/changePasswordForm";
+import { APP_NAME, getPageTitle } from "@/constants/app";
 
 export const metadata = {
-  title: "Change Password — Model Helper",
-  description: "Update your Model Helper account password.",
+  title: getPageTitle("Change Password"),
+  description: `Update your ${APP_NAME} account password.`,
 };
 
 export default function ChangePasswordPage(): React.ReactElement {

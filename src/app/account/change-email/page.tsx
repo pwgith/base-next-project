@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ChangeEmailForm } from "@/components/auth/changeEmailForm";
+import { APP_NAME, getPageTitle } from "@/constants/app";
 
 export const metadata = {
-  title: "Change Email Address — Model Helper",
-  description: "Update the email address on your Model Helper account.",
+  title: getPageTitle("Change Email Address"),
+  description: `Update the email address on your ${APP_NAME} account.`,
 };
 
 export default function ChangeEmailPage(): React.ReactElement {

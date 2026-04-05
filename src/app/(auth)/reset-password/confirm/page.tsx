@@ -1,8 +1,9 @@
 import { ResetPasswordConfirmForm } from "@/components/auth/resetPasswordConfirmForm";
+import { APP_NAME, getPageTitle } from "@/constants/app";
 
 export const metadata = {
-  title: "Set New Password — Model Helper",
-  description: "Set a new password for your Model Helper account.",
+  title: getPageTitle("Set New Password"),
+  description: `Set a new password for your ${APP_NAME} account.`,
 };
 
 interface Props {

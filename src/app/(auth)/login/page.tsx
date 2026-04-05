@@ -1,9 +1,10 @@
 import { LoginForm } from "@/components/auth/loginForm";
+import { APP_NAME, getPageTitle } from "@/constants/app";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Sign in — Model Helper",
-  description: "Sign in to your Model Helper account.",
+  title: getPageTitle("Sign in"),
+  description: `Sign in to your ${APP_NAME} account.`,
 };
 
 interface LoginPageProps {
@@ -27,7 +28,7 @@ export default async function LoginPage({
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold text-slate-900 mb-1">
-              Sign in to Model Helper
+              Sign in to {APP_NAME}
             </h1>
             <p className="text-sm text-slate-500">
               Don&apos;t have an account?{" "}

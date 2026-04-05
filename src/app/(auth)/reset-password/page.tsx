@@ -1,8 +1,9 @@
 import { ResetPasswordRequestForm } from "@/components/auth/resetPasswordRequestForm";
+import { APP_NAME, getPageTitle } from "@/constants/app";
 
 export const metadata = {
-  title: "Reset Password — Model Helper",
-  description: "Reset your Model Helper account password.",
+  title: getPageTitle("Reset Password"),
+  description: `Reset your ${APP_NAME} account password.`,
 };
 
 export default function ResetPasswordPage(): React.ReactElement {

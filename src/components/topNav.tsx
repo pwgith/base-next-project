@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { APP_NAME } from "@/constants/app";
 import { createBrowserClient } from "@/lib/supabase/browserClient";
 
 interface NavLink {
@@ -88,7 +89,7 @@ export function TopNav(): React.ReactElement {
           href="/"
           className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
         >
-          Model Helper
+          {APP_NAME}
         </Link>
 
         {/* Desktop: primary nav links (hidden on mobile) */}

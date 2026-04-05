@@ -1,9 +1,10 @@
 import { SignUpForm } from "@/components/auth/signUpForm";
+import { APP_NAME, getPageTitle } from "@/constants/app";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Create account — Model Helper",
-  description: "Sign up for a free Model Helper account.",
+  title: getPageTitle("Create account"),
+  description: `Sign up for a free ${APP_NAME} account.`,
 };
 
 export default function SignUpPage(): React.ReactElement {

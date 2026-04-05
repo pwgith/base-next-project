@@ -3,13 +3,14 @@ import { Inter } from "next/font/google";
 
 import { AppFooter } from "@/components/appFooter";
 import { TopNav } from "@/components/topNav";
+import { APP_NAME, APP_TAGLINE } from "@/constants/app";
 import "@/styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Model Helper",
-  description: "Modeling for the rest of us.",
+  title: APP_NAME,
+  description: APP_TAGLINE,
 };
 
 export default function RootLayout({
