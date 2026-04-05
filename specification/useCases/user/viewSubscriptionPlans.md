@@ -9,12 +9,12 @@
 | **Priority**     | High                           |
 | **Status**       | Draft                          |
 | **Created**      | 2026-03-06                     |
-| **Last Updated** | 2026-03-06                     |
+| **Last Updated** | 2026-04-04                     |
 
 
 ## Summary
 
-A signed-in user views the available subscription plans — Free, Hobby, and Investor — along with their features and usage limits, and can see which plan they are currently on.
+A signed-in user views the available subscription plans — Free, Light, and Full — along with their features and usage limits, and can see which plan they are currently on.
 
 ## Preconditions
 
@@ -27,7 +27,7 @@ The user navigates to the subscription or billing section of the application.
 ## Main Flow (Happy Path)
 
 1. The user navigates to the subscription plans page.
-2. The system displays all three available plans: Free, Hobby, and Investor.
+2. The system displays all three available plans: Free, Light, and Full.
 3. For each plan the system shows:
    - The plan name and price (or "Free" for the free tier).
    - The features included in the plan.
@@ -42,7 +42,7 @@ The user navigates to the subscription or billing section of the application.
 
 - **Branches from**: Step 4 of Main Flow
 - The system indicates the user is on the Free plan.
-- Upgrade actions are shown for the Hobby and Investor plans.
+- Upgrade actions are shown for the Light and Full plans.
 - No downgrade or cancel action is shown.
 - Selecting an upgrade action initiates [UC-USR-012 Upgrade Subscription](./upgradeSubscription.md).
 
@@ -74,19 +74,19 @@ The user navigates to the subscription or billing section of the application.
 
 ## Business Rules
 
-- The three subscription tiers are **Free**, **Hobby**, and **Investor**, in ascending order.
+- The three subscription tiers are **Free**, **Light**, and **Full**, in ascending order.
 - Every new account starts on the **Free** plan by default.
 - **Free is the lowest tier**; a user can never be placed on a plan below Free.
 - Each tier provides access to a defined set of features and usage limits as specified in the feature configuration.
 - Some features are available on all tiers (possibly with different limits); others are restricted to higher tiers.
 - The Free tier has no cost and no billing cycle.
-- Paid tiers (Hobby, Investor) are billed on a recurring cycle managed by Stripe, starting from the initial subscription date.
+- Paid tiers (Light, Full) are billed on a recurring cycle managed by Stripe, starting from the initial subscription date.
 - Billing details (current period start, current period end, next billing date) are sourced directly from the Stripe API at page load time; the application does not duplicate this data locally.
 - Downgrade, cancellation, and payment method management for paid plans are performed in the **Stripe Customer Portal**, not within the application UI.
 
 ## UI Reference
 
-None at this time.
+See `design/ui/subscriptionPlans.html`.
 
 ## Features
 

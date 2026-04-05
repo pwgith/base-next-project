@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { normalizePlan } from "@/modules/subscription/subscriptionTypes";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   if (process.env.NODE_ENV === "production") {
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   return NextResponse.json({
     subscription: {
       profileId: subscription.profileId,
-      plan: subscription.plan,
+      plan: normalizePlan(subscription.plan),
       status: subscription.status,
       stripeSubscriptionId: subscription.stripeSubscriptionId,
       stripeCustomerId: subscription.stripeCustomerId,
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       scheduledChange: subscription.scheduledChange
         ? {
             changeType: subscription.scheduledChange.changeType,
-            targetPlan: subscription.scheduledChange.targetPlan,
+            targetPlan: normalizePlan(subscription.scheduledChange.targetPlan),
             effectiveAt: subscription.scheduledChange.effectiveAt.toISOString(),
           }
         : null,

@@ -14,8 +14,8 @@ import { env } from '@/lib/env';
 
 type PlanPrices = {
   free: string;
-  hobby: string;
-  investor: string;
+  light: string;
+  full: string;
 };
 
 /** Format a Stripe unit_amount (in cents) and currency code as "A$X.XX / month". */
@@ -27,15 +27,15 @@ function formatPrice(unitAmount: number | null, currency: string): string {
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const [hobbyPrice, investorPrice] = await Promise.all([
-      stripe.prices.retrieve(env.stripePriceIdHobby),
-      stripe.prices.retrieve(env.stripePriceIdInvestor),
+    const [lightPrice, fullPrice] = await Promise.all([
+      stripe.prices.retrieve(env.stripePriceIdLight),
+      stripe.prices.retrieve(env.stripePriceIdFull),
     ]);
 
     const prices: PlanPrices = {
       free: 'A$0 / month',
-      hobby: formatPrice(hobbyPrice.unit_amount, hobbyPrice.currency),
-      investor: formatPrice(investorPrice.unit_amount, investorPrice.currency),
+      light: formatPrice(lightPrice.unit_amount, lightPrice.currency),
+      full: formatPrice(fullPrice.unit_amount, fullPrice.currency),
     };
 
     return NextResponse.json({ data: prices });

@@ -15,6 +15,6 @@ export const env = {
   // All vars are lazily evaluated — only throws when the var is actually accessed.
   get stripeSecretKey() { return requireEnv("STRIPE_SECRET_KEY"); },
   get stripeWebhookSecret() { return requireEnv("STRIPE_WEBHOOK_SECRET"); },
-  get stripePriceIdHobby() { return requireEnv("STRIPE_PRICE_ID_HOBBY"); },
-  get stripePriceIdInvestor() { return requireEnv("STRIPE_PRICE_ID_INVESTOR"); },
+  get stripePriceIdLight() { return requireEnv("STRIPE_PRICE_ID_LIGHT"); },
+  get stripePriceIdFull() { return requireEnv("STRIPE_PRICE_ID_FULL"); },
 };

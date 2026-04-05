@@ -17,8 +17,8 @@ import { PLAN_RANK } from './subscriptionTypes';
 import type Stripe from 'stripe';
 
 const PLAN_TO_PRICE_ID: Record<Exclude<Plan, 'free'>, string> = {
-  hobby: env.stripePriceIdHobby,
-  investor: env.stripePriceIdInvestor,
+  light: env.stripePriceIdLight,
+  full: env.stripePriceIdFull,
 };
 
 /** Map a Stripe Price ID back to an application Plan. */
@@ -74,7 +74,7 @@ export async function createCheckoutSession(
     !Object.keys(PLAN_TO_PRICE_ID).includes(targetPlan)
   ) {
     throw new ValidationError('Invalid plan.', {
-      plan: 'Must be hobby or investor.',
+      plan: 'Must be light or full.',
     });
   }
 
@@ -237,8 +237,8 @@ async function handleCheckoutSessionCompleted(
     console.error(
       `[handleCheckoutSessionCompleted] Unrecognised Stripe price ID "${metadataPriceId ?? '(from subscription retrieve)'}" — ` +
       `no matching STRIPE_PRICE_ID_* env var. Subscription not updated. ` +
-      `Check STRIPE_PRICE_ID_HOBBY and STRIPE_PRICE_ID_INVESTOR in your environment. ` +
-      `Configured: HOBBY=${process.env.STRIPE_PRICE_ID_HOBBY ?? 'unset'}, INVESTOR=${process.env.STRIPE_PRICE_ID_INVESTOR ?? 'unset'}`,
+      `Check STRIPE_PRICE_ID_LIGHT and STRIPE_PRICE_ID_FULL in your environment. ` +
+      `Configured: LIGHT=${process.env.STRIPE_PRICE_ID_LIGHT ?? 'unset'}, FULL=${process.env.STRIPE_PRICE_ID_FULL ?? 'unset'}`,
     );
     return;
   }
@@ -294,7 +294,7 @@ async function handleSubscriptionUpdated(stripeSub: Stripe.Subscription): Promis
     );
 
     if (targetPlan && targetPlan !== 'free') {
-      // Scheduled downgrade to a lower paid plan (e.g. Investor → Hobby).
+      // Scheduled downgrade to a lower paid plan (e.g. Full → Light).
       await subscriptionRepository.setScheduledChange(
         updated.id,
         'downgrade',
@@ -318,7 +318,7 @@ async function handleSubscriptionUpdated(stripeSub: Stripe.Subscription): Promis
       console.error(
         `[handleSubscriptionUpdated] Unrecognised Stripe price ID "${priceId}" — ` +
         `no matching STRIPE_PRICE_ID_* env var. Subscription not updated. ` +
-        `Check STRIPE_PRICE_ID_HOBBY and STRIPE_PRICE_ID_INVESTOR in your environment.`,
+        `Check STRIPE_PRICE_ID_LIGHT and STRIPE_PRICE_ID_FULL in your environment.`,
       );
       return;
     }

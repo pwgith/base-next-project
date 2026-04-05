@@ -30,7 +30,7 @@ export const SUB_TEST_PASSWORD = "Secure!99";
 Given(
   "the user is subscribed to the {string} plan",
   async function (planName: string) {
-    const plan = planName.toLowerCase() as "free" | "hobby" | "investor";
+    const plan = planName.toLowerCase() as "free" | "light" | "full";
 
     // Allow F-014 (processStripeWebhook) scenarios to override the email and customer ID
     // via world state set in the "a user profile exists with Stripe customer ID" step.
@@ -69,7 +69,7 @@ Given(
 Given(
   "the user is subscribed to the {string} plan with a billing period ending on {string}",
   async function (planName: string, periodEndDate: string) {
-    const plan = planName.toLowerCase() as "hobby" | "investor";
+    const plan = planName.toLowerCase() as "light" | "full";
     const periodEnd = new Date(periodEndDate);
     const periodStart = new Date(periodEnd);
     periodStart.setDate(periodStart.getDate() - 30);

@@ -5,9 +5,9 @@ import { createBrowserClient } from "@/lib/supabase/browserClient";
 
 // ─── Plan definitions ─────────────────────────────────────────────────────────
 
-type Plan = "free" | "hobby" | "investor";
+type Plan = "free" | "light" | "full";
 
-const PLAN_RANK: Record<Plan, number> = { free: 0, hobby: 1, investor: 2 };
+const PLAN_RANK: Record<Plan, number> = { free: 0, light: 1, full: 2 };
 
 interface PlanDef {
   id: Plan;
@@ -28,8 +28,8 @@ const PLAN_DEFS_BASE: Omit<PlanDef, "price">[] = [
     highlight: false,
   },
   {
-    id: "hobby",
-    name: "Hobby",
+    id: "light",
+    name: "Light",
     analysesPerMonth: "20 analyses / month",
     features: [
       "Everything in Free",
@@ -40,11 +40,11 @@ const PLAN_DEFS_BASE: Omit<PlanDef, "price">[] = [
     highlight: true,
   },
   {
-    id: "investor",
-    name: "Investor",
+    id: "full",
+    name: "Full",
     analysesPerMonth: "Unlimited analyses",
     features: [
-      "Everything in Hobby",
+      "Everything in Light",
       "Advanced measurements",
       "API access",
       "Dedicated support",
@@ -55,7 +55,7 @@ const PLAN_DEFS_BASE: Omit<PlanDef, "price">[] = [
 
 type PlanPrices = Record<Plan, string>;
 
-const DEFAULT_PRICES: PlanPrices = { free: "A$0 / month", hobby: "…", investor: "…" };
+const DEFAULT_PRICES: PlanPrices = { free: "A$0 / month", light: "…", full: "…" };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -288,11 +288,11 @@ export default function SubscriptionPlansPage() {
         {PLAN_DEFS.map((plan) => {
           const isCurrent = plan.id === currentPlan;
           // Free users can upgrade to any higher plan via Stripe Checkout.
-          // Hobby users can upgrade to Investor only (handled via the Customer Portal).
-          // Investor users have no upgrade option.
+          // Light users can upgrade to Full only (handled via the Customer Portal).
+          // Full users have no upgrade option.
           const canUpgrade =
             PLAN_RANK[plan.id] > PLAN_RANK[currentPlan] &&
-            (currentPlan === "free" || (currentPlan === "hobby" && plan.id === "investor"));
+            (currentPlan === "free" || (currentPlan === "light" && plan.id === "full"));
 
           return (
             <div
@@ -340,7 +340,7 @@ export default function SubscriptionPlansPage() {
                 ))}
               </ul>
 
-              {/* Upgrade button — shown for Free users (checkout) or Hobby users upgrading to Investor (portal) */}
+              {/* Upgrade button — shown for Free users (checkout) or Light users upgrading to Full (portal) */}
               {canUpgrade && (
                 <button
                   data-testid={`upgrade-btn-${plan.id}`}

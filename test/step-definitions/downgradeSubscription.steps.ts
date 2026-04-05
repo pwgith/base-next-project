@@ -26,7 +26,7 @@ const WEBHOOK_URL = "http://localhost:3000/api/subscription/webhook";
  * @param overrides   Stripe.Subscription fields to override (must include cancel_at_period_end).
  * @param periodEnd   The period-end date used for both the subscription and the scheduled change.
  * @param targetPlan  When simulating a downgrade (not a full cancellation), provide the target
- *                    plan ('hobby' | 'investor'). The webhook will carry that plan's price ID so
+ *                    plan ('light' | 'full'). The webhook will carry that plan's price ID so
  *                    the handler can distinguish a downgrade from a cancellation.
  */
 async function sendSubscriptionUpdatedWebhook(
@@ -52,7 +52,7 @@ async function sendSubscriptionUpdatedWebhook(
     // Cancellation — no specific target plan price.
     priceId = "price_cancel_placeholder";
   } else {
-    priceId = process.env.STRIPE_PRICE_ID_HOBBY ?? "price_hobby_placeholder";
+    priceId = process.env.STRIPE_PRICE_ID_LIGHT ?? "price_light_placeholder";
   }
 
   const subscriptionObject: Record<string, unknown> = {

@@ -23,7 +23,7 @@ Before({ tags: "@F-010" }, async function () {
 /**
  * S-085 — Ensure a real Stripe test-mode customer exists for the subscription
  * test email. The customer ID is stored in world state so the generic
- * "the user is subscribed to the 'Hobby' plan" step picks it up and persists
+ * "the user is subscribed to the 'Light' plan" step picks it up and persists
  * it to the DB, enabling the portal session API call to succeed.
  */
 Before({ tags: "@S-085" }, async function () {
@@ -83,8 +83,8 @@ Then(
   "upgrade options are available for the {string} and {string} plans",
   async function (plan1: string, plan2: string) {
     const app: Application = this.app;
-    const p1 = plan1.toLowerCase() as "hobby" | "investor";
-    const p2 = plan2.toLowerCase() as "hobby" | "investor";
+    const p1 = plan1.toLowerCase() as "light" | "full";
+    const p2 = plan2.toLowerCase() as "light" | "full";
     const v1 = await app.isUpgradeBtnVisible(p1);
     const v2 = await app.isUpgradeBtnVisible(p2);
     assert.ok(v1, `Expected upgrade button for "${plan1}" to be visible.`);
@@ -96,7 +96,7 @@ Then(
   "an upgrade option is available for the {string} plan",
   async function (plan: string) {
     const app: Application = this.app;
-    const visible = await app.isUpgradeBtnVisible(plan.toLowerCase() as "hobby" | "investor");
+    const visible = await app.isUpgradeBtnVisible(plan.toLowerCase() as "light" | "full");
     assert.ok(visible, `Expected upgrade button for "${plan}" to be visible.`);
   },
 );
@@ -197,7 +197,7 @@ Then(
   async function (dataTable: { hashes: () => Array<{ plan: string; price: string }> }) {
     const app: Application = this.app;
     for (const row of dataTable.hashes()) {
-      const plan = row.plan.toLowerCase() as "free" | "hobby" | "investor";
+      const plan = row.plan.toLowerCase() as "free" | "light" | "full";
       const actual = await app.getPlanPrice(plan);
       assert.strictEqual(
         actual,
@@ -216,7 +216,7 @@ Given(
   "the Stripe {string} plan price is {string}",
   async function (planName: string, expectedPrice: string) {
     const app: Application = this.app;
-    const plan = planName.toLowerCase() as "free" | "hobby" | "investor";
+    const plan = planName.toLowerCase() as "free" | "light" | "full";
     await app.verifyStripePlanPrice(plan, expectedPrice);
   },
 );
@@ -225,7 +225,7 @@ Then(
   "the {string} plan price is displayed as {string}",
   async function (planName: string, expectedPrice: string) {
     const app: Application = this.app;
-    const plan = planName.toLowerCase() as "free" | "hobby" | "investor";
+    const plan = planName.toLowerCase() as "free" | "light" | "full";
     const actual = await app.getPlanPrice(plan);
     assert.strictEqual(
       actual,

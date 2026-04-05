@@ -5,7 +5,7 @@
 | Field            | Value      |
 |------------------|------------|
 | **Status**       | Draft      |
-| **Last Updated** | 2026-03-16 |
+| **Last Updated** | 2026-04-04 |
 | **Reviewed By**  | Pending    |
 
 ---
@@ -69,7 +69,7 @@ graph LR
 | profileId            | UUID      | UNIQUE NOT NULL          | Foreign key to `profile.id` — one subscription per profile                                            |
 | stripeCustomerId     | TEXT      | UNIQUE NULL              | Stripe Customer ID (`cus_…`). `NULL` for users who have never subscribed to a paid plan               |
 | stripeSubscriptionId | TEXT      | UNIQUE NULL              | Stripe Subscription ID (`sub_…`). `NULL` for users on the Free plan with no active Stripe subscription|
-| plan                 | TEXT      | NOT NULL                 | The user's currently active plan. Values: `free`, `hobby`, `investor`                                 |
+| plan                 | TEXT      | NOT NULL                 | The user's currently active plan. Values: `free`, `light`, `full`                                     |
 | status               | TEXT      | NOT NULL DEFAULT 'inactive' | Subscription status from Stripe. Values: `active`, `past_due`, `canceled`, `inactive`              |
 | currentPeriodStart   | TIMESTAMP | NULL                     | Start of the current billing period sourced from Stripe. `NULL` for the Free plan                     |
 | currentPeriodEnd     | TIMESTAMP | NULL                     | End of the current billing period sourced from Stripe. `NULL` for the Free plan                       |
@@ -97,7 +97,7 @@ graph LR
 | id             | UUID      | PK                      | Application-generated primary key                                                                        |
 | subscriptionId | UUID      | UNIQUE NOT NULL         | Foreign key to `subscription.id` — enforces at most one pending change per subscription                  |
 | changeType     | TEXT      | NOT NULL                | The type of scheduled change. Values: `downgrade`, `cancel`                                              |
-| targetPlan     | TEXT      | NOT NULL                | The plan to switch to when the change takes effect. Values: `free`, `hobby`, `investor`                  |
+| targetPlan     | TEXT      | NOT NULL                | The plan to switch to when the change takes effect. Values: `free`, `light`, `full`                    |
 | effectiveAt    | TIMESTAMP | NOT NULL                | The date and time at which the change will take effect (the current billing period end date from Stripe)  |
 | version        | INT       | NOT NULL DEFAULT 1      | Optimistic locking counter                                                                               |
 | createdAt      | TIMESTAMP | NOT NULL DEFAULT now()  | Record creation timestamp                                                                                |
@@ -197,3 +197,4 @@ graph LR
 | 2026-03-06 | Added `subscription` and `subscription_scheduled_change` tables                                                       | Subscription feature (UC-USR-011 – UC-USR-014)                    | Approved 2026-03-06 |
 | 2026-03-06 | Added `stripeCustomerId`, `stripeSubscriptionId`, `status` to `subscription`; added `changeType` to `subscription_scheduled_change`; added `processed_stripe_event` table | Stripe integration (UC-USR-012 – UC-USR-014, UC-SYS-001) | Pending |
 | 2026-03-16 | Added `ifc_project` and `ifc_version` tables | IFC project management and versioned IFC storage (UC-USR-015, UC-USR-016, F-015 – F-028) | Pending |
+| 2026-04-04 | Renamed paid subscription plan values from `hobby`/`investor` to `light`/`full` | Product tier rename for subscription flows | Pending |

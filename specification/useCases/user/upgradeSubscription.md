@@ -9,11 +9,11 @@
 | **Priority**     | High                           |
 | **Status**       | Draft                          |
 | **Created**      | 2026-03-06                     |
-| **Last Updated** | 2026-03-06                     |
+| **Last Updated** | 2026-04-04                     |
 
 ## Summary
 
-A signed-in user upgrades their subscription to a higher tier (e.g., Free → Hobby, Free → Investor, or Hobby → Investor). For upgrades from the Free plan, the user is redirected to the Stripe Checkout hosted page to enter payment details. For upgrades between paid plans, the user is redirected to the Stripe Customer Portal. The upgrade takes effect immediately upon successful payment, and the subscription is managed by Stripe thereafter.
+A signed-in user upgrades their subscription to a higher tier (e.g., Free → Light, Free → Full, or Light → Full). For upgrades from the Free plan, the user is redirected to the Stripe Checkout hosted page to enter payment details. For upgrades between paid plans, the user is redirected to the Stripe Customer Portal. The upgrade takes effect immediately upon successful payment, and the subscription is managed by Stripe thereafter.
 
 ## Preconditions
 
@@ -37,7 +37,7 @@ The user selects the upgrade action for a higher-tier plan on the subscription p
 8. In parallel, Stripe delivers a `checkout.session.completed` webhook event to the application (see [UC-SYS-001 Process Stripe Webhook](../system/processStripeWebhook.md)), which updates the subscription record with the Stripe subscription ID and new plan.
 9. The user now has access to the features and limits of the new plan.
 
-## Alternative Flow — Upgrade Between Paid Plans (e.g., Hobby → Investor)
+## Alternative Flow — Upgrade Between Paid Plans (e.g., Light → Full)
 
 - **Branches from**: Step 1 of Main Flow
 - Instead of Stripe Checkout, the system creates a Stripe Customer Portal session for the user.
@@ -94,14 +94,14 @@ The user selects the upgrade action for a higher-tier plan on the subscription p
 - Upgrades take effect **immediately** upon Stripe confirming the subscription.
 - A user may only upgrade to a tier **higher** than their current plan; lateral or downward moves are handled by separate use cases.
 - The available upgrade paths are:
-  - Free → Hobby
-  - Free → Investor
-  - Hobby → Investor
+  - Free → Light
+  - Free → Full
+  - Light → Full
 - The Stripe Price ID for each plan is stored as a server-side environment variable; it is never sent to the client.
 
 ## UI Reference
 
-None at this time.
+See `design/ui/subscriptionPlans.html`.
 
 ## Features
 

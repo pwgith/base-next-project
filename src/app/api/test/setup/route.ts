@@ -9,9 +9,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/serverClient";
 import { prisma } from "@/lib/prisma";
+import { normalizePlan } from "@/modules/subscription/subscriptionTypes";
 
 interface SetupSubscription {
-  plan: string; // 'free' | 'hobby' | 'investor'
+  plan: string; // 'free' | 'light' | 'full'
   status?: string; // 'active' | 'inactive' | 'past_due' | 'canceled'
   currentPeriodStart?: string; // ISO date string
   currentPeriodEnd?: string; // ISO date string
@@ -42,12 +43,17 @@ async function applySubscriptionSetup(
   profileId: string,
   sub: SetupSubscription,
 ): Promise<void> {
+  const normalizedPlan = normalizePlan(sub.plan ?? 'free');
+  const normalizedTargetPlan = sub.scheduledChange
+    ? normalizePlan(sub.scheduledChange.targetPlan)
+    : undefined;
+
   const subRecord = await prisma.subscription.upsert({
     where: { profileId },
     create: {
       profileId,
-      plan: sub.plan ?? 'free',
-      status: sub.status ?? (sub.plan !== 'free' && sub.currentPeriodEnd ? 'active' : 'inactive'),
+      plan: normalizedPlan,
+      status: sub.status ?? (normalizedPlan !== 'free' && sub.currentPeriodEnd ? 'active' : 'inactive'),
       stripeCustomerId: sub.stripeCustomerId ?? null,
       stripeSubscriptionId: sub.stripeSubscriptionId ?? null,
       currentPeriodStart: sub.currentPeriodStart ? new Date(sub.currentPeriodStart) : null,
@@ -57,8 +63,8 @@ async function applySubscriptionSetup(
       // Only update plan-related fields when a plan is explicitly provided.
       // Calls that only set scheduledChange (or stripeIds) should leave these intact.
       ...(sub.plan !== undefined && {
-        plan: sub.plan,
-        status: sub.status ?? (sub.plan !== 'free' && sub.currentPeriodEnd ? 'active' : 'inactive'),
+        plan: normalizedPlan,
+        status: sub.status ?? (normalizedPlan !== 'free' && sub.currentPeriodEnd ? 'active' : 'inactive'),
         currentPeriodStart: sub.currentPeriodStart ? new Date(sub.currentPeriodStart) : null,
         currentPeriodEnd: sub.currentPeriodEnd ? new Date(sub.currentPeriodEnd) : null,
       }),
@@ -74,12 +80,12 @@ async function applySubscriptionSetup(
       create: {
         subscriptionId: subRecord.id,
         changeType: sub.scheduledChange.changeType,
-        targetPlan: sub.scheduledChange.targetPlan,
+          targetPlan: normalizedTargetPlan!,
         effectiveAt: new Date(sub.scheduledChange.effectiveAt),
       },
       update: {
         changeType: sub.scheduledChange.changeType,
-        targetPlan: sub.scheduledChange.targetPlan,
+          targetPlan: normalizedTargetPlan!,
         effectiveAt: new Date(sub.scheduledChange.effectiveAt),
         version: { increment: 1 },
       },

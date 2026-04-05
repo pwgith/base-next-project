@@ -8,30 +8,30 @@ Feature: Process Stripe webhook
   Scenario: Valid checkout.session.completed webhook activates a new paid subscription
     Given a user profile exists with Stripe customer ID "cus_ABC123"
     And the user is on the "Free" plan
-    When Stripe sends a valid "checkout.session.completed" webhook for customer "cus_ABC123" with plan "Hobby"
-    Then the user's subscription is updated to "Hobby" with status "active"
+    When Stripe sends a valid "checkout.session.completed" webhook for customer "cus_ABC123" with plan "Light"
+    Then the user's subscription is updated to "Light" with status "active"
     And the Stripe subscription ID is recorded against the user's profile
 
   @S-091 @UC-SYS-001
   Scenario: Valid customer.subscription.updated webhook records a scheduled downgrade
     Given a user profile exists with Stripe customer ID "cus_ABC123"
-    And the user is subscribed to the "Investor" plan
-    When Stripe sends a valid "customer.subscription.updated" webhook for customer "cus_ABC123" indicating a downgrade to "Hobby" at "2026-04-06"
-    Then the user's current plan remains "Investor"
-    And a downgrade to "Hobby" is recorded as scheduled for "2026-04-06"
+    And the user is subscribed to the "Full" plan
+    When Stripe sends a valid "customer.subscription.updated" webhook for customer "cus_ABC123" indicating a downgrade to "Light" at "2026-04-06"
+    Then the user's current plan remains "Full"
+    And a downgrade to "Light" is recorded as scheduled for "2026-04-06"
 
   @S-092 @UC-SYS-001
   Scenario: Valid customer.subscription.updated webhook records a pending cancellation
     Given a user profile exists with Stripe customer ID "cus_ABC123"
-    And the user is subscribed to the "Hobby" plan
+    And the user is subscribed to the "Light" plan
     When Stripe sends a valid "customer.subscription.updated" webhook for customer "cus_ABC123" indicating cancellation at "2026-04-06"
-    Then the user's current plan remains "Hobby"
+    Then the user's current plan remains "Light"
     And a cancellation is recorded as scheduled for "2026-04-06"
 
   @S-093 @UC-SYS-001
   Scenario: Valid customer.subscription.deleted webhook reverts the user to the Free plan
     Given a user profile exists with Stripe customer ID "cus_ABC123"
-    And the user is subscribed to the "Hobby" plan with a pending cancellation
+    And the user is subscribed to the "Light" plan with a pending cancellation
     When Stripe sends a valid "customer.subscription.deleted" webhook for customer "cus_ABC123"
     Then the user's plan is updated to "Free"
     And the subscription status is set to "inactive"
@@ -61,6 +61,6 @@ Feature: Process Stripe webhook
   @S-098 @UC-SYS-001
   Scenario: checkout.session.completed with an unrecognised price ID does not revert plan to Free
     Given a user profile exists with Stripe customer ID "cus_ABC123"
-    And the user is subscribed to the "Hobby" plan
+    And the user is subscribed to the "Light" plan
     When Stripe sends a "checkout.session.completed" webhook for customer "cus_ABC123" with an unrecognised price ID
-    Then the user's subscription remains "Hobby"
+    Then the user's subscription remains "Light"

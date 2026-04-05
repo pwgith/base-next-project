@@ -9,7 +9,7 @@
 | **Priority**     | Medium                         |
 | **Status**       | Draft                          |
 | **Created**      | 2026-03-09                     |
-| **Last Updated** | 2026-03-09                     |
+| **Last Updated** | 2026-04-04                     |
 
 ## Summary
 
@@ -19,7 +19,7 @@ The admin updates the unit price of one or more subscription plans directly in t
 
 - The admin has access to the Stripe Dashboard for the application's Stripe account.
 - The application is configured to fetch plan prices from the Stripe API using the `STRIPE_SECRET_KEY` environment variable.
-- The Stripe products for the Hobby and Investor plans are already created in Stripe and linked to the application via their Stripe Price IDs.
+- The Stripe products for the Light and Full plans are already created in Stripe and linked to the application via their Stripe Price IDs.
 
 ## Trigger
 
@@ -28,7 +28,7 @@ The admin decides to change the monthly price of one or more subscription tiers 
 ## Main Flow (Happy Path)
 
 1. The admin opens the Stripe Dashboard and navigates to the Products section.
-2. The admin locates the product representing the subscription plan to update (e.g., "Hobby").
+2. The admin locates the product representing the subscription plan to update (e.g., "Light").
 3. The admin creates a new price for the product at the desired amount and currency (e.g., AUD A$3.00 / month), and archives the old price.
 4. The admin updates the application's configuration (e.g., environment variable or database record) to reference the new Stripe Price ID for the relevant plan, if Price IDs have changed.
 5. A user views the subscription plans page in the application.
@@ -76,7 +76,7 @@ The admin decides to change the monthly price of one or more subscription tiers 
 
 ## UI Reference
 
-None at this time.
+See `design/ui/subscriptionPlans.html`.
 
 ## Features
 

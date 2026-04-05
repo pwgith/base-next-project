@@ -488,7 +488,7 @@ export class Application {
   }
 
   /** Returns the price string displayed for the given plan card. */
-  async getPlanPrice(plan: "free" | "hobby" | "investor"): Promise<string> {
+  async getPlanPrice(plan: "free" | "light" | "full"): Promise<string> {
     return this.subscriptionPlansPage.getPlanPrice(plan);
   }
 
@@ -497,7 +497,7 @@ export class Application {
    * and asserts it matches the expected formatted price string (e.g. "A$3.00 / month").
    * Throws if the prices API is unreachable or the price does not match.
    */
-  async verifyStripePlanPrice(plan: "free" | "hobby" | "investor", expectedPrice: string): Promise<void> {
+  async verifyStripePlanPrice(plan: "free" | "light" | "full", expectedPrice: string): Promise<void> {
     const res = await fetch("http://localhost:3000/api/subscription/prices");
     if (!res.ok) {
       throw new Error(`Prices API returned ${res.status} â€” is the app running?`);
@@ -533,7 +533,7 @@ export class Application {
   }
 
   /** Returns true if an upgrade button for the given plan is visible. */
-  async isUpgradeBtnVisible(plan: "hobby" | "investor"): Promise<boolean> {
+  async isUpgradeBtnVisible(plan: "light" | "full"): Promise<boolean> {
     return this.subscriptionPlansPage.isUpgradeBtnVisible(plan);
   }
 
@@ -551,7 +551,7 @@ export class Application {
    * Click the upgrade button for the given plan, intercept the Stripe redirect,
    * and return the Stripe Checkout URL.
    */
-  async clickUpgrade(plan: "hobby" | "investor"): Promise<string> {
+  async clickUpgrade(plan: "light" | "full"): Promise<string> {
     return this.subscriptionPlansPage.clickUpgrade(plan);
   }
 

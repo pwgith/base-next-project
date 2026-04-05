@@ -1,7 +1,7 @@
 /**
  * POST /api/subscription/checkout — create a Stripe Checkout session for upgrading
  * from the Free plan to a paid plan.
- * Body: { plan: 'hobby' | 'investor' }
+ * Body: { plan: 'light' | 'full' }
  * Returns: { data: { url: string } }
  */
 

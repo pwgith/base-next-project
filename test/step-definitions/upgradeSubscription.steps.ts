@@ -50,7 +50,7 @@ Before({ tags: "@S-088" }, async function () {
 Given(
   "the user has completed payment for the {string} plan in Stripe Checkout",
   async function (planName: string) {
-    const plan = planName.toLowerCase() as "hobby" | "investor";
+    const plan = planName.toLowerCase() as "light" | "full";
     await fetch(SETUP_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -89,7 +89,7 @@ When(
   async function (targetPlan: string) {
     const app: Application = this.app;
     await app.navigateToSubscription();
-    const url = await app.clickUpgrade(targetPlan.toLowerCase() as "hobby" | "investor");
+    const url = await app.clickUpgrade(targetPlan.toLowerCase() as "light" | "full");
     this.stripeRedirectUrl = url;
   },
 );

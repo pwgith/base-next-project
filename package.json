@@ -14,7 +14,7 @@
     "test:integration": "npx jest --config jest.config.ts test/support/application.integration.test.ts",
     "test:cucumber": "npx tsx ./node_modules/@cucumber/cucumber/bin/cucumber-js",
     "test:cucumber:f001": "npx tsx ./node_modules/@cucumber/cucumber/bin/cucumber-js --tags @F-001",
-    "stripe-cli": "c:/Tools/stripe.exe listen --latest --forward-to localhost:3000/api/subscription/webhook"
+    "stripe-cli": "node scripts/startStripeCli.js"
   },
   "repository": {
     "type": "git",

@@ -13,15 +13,15 @@ export class SubscriptionPlansPage {
 
   // ── Plan card locators ─────────────────────────────────────────────────────
   readonly planCardFree: Locator;
-  readonly planCardHobby: Locator;
-  readonly planCardInvestor: Locator;
+  readonly planCardLight: Locator;
+  readonly planCardFull: Locator;
   readonly planPriceFree: Locator;
-  readonly planPriceHobby: Locator;
-  readonly planPriceInvestor: Locator;
+  readonly planPriceLight: Locator;
+  readonly planPriceFull: Locator;
 
   // ── Action button locators ─────────────────────────────────────────────────
-  readonly upgradeBtnHobby: Locator;
-  readonly upgradeBtnInvestor: Locator;
+  readonly upgradeBtnLight: Locator;
+  readonly upgradeBtnFull: Locator;
   readonly manageBillingBtn: Locator;
 
   constructor(page: Page) {
@@ -35,14 +35,14 @@ export class SubscriptionPlansPage {
     this.scheduledChangeDate = page.locator('[data-testid="scheduled-change-date"]');
 
     this.planCardFree = page.locator('[data-testid="plan-card-free"]');
-    this.planCardHobby = page.locator('[data-testid="plan-card-hobby"]');
-    this.planCardInvestor = page.locator('[data-testid="plan-card-investor"]');
+    this.planCardLight = page.locator('[data-testid="plan-card-light"]');
+    this.planCardFull = page.locator('[data-testid="plan-card-full"]');
     this.planPriceFree = page.locator('[data-testid="plan-price-free"]');
-    this.planPriceHobby = page.locator('[data-testid="plan-price-hobby"]');
-    this.planPriceInvestor = page.locator('[data-testid="plan-price-investor"]');
+    this.planPriceLight = page.locator('[data-testid="plan-price-light"]');
+    this.planPriceFull = page.locator('[data-testid="plan-price-full"]');
 
-    this.upgradeBtnHobby = page.locator('[data-testid="upgrade-btn-hobby"]');
-    this.upgradeBtnInvestor = page.locator('[data-testid="upgrade-btn-investor"]');
+    this.upgradeBtnLight = page.locator('[data-testid="upgrade-btn-light"]');
+    this.upgradeBtnFull = page.locator('[data-testid="upgrade-btn-full"]');
     this.manageBillingBtn = page.locator('[data-testid="manage-billing-btn"]');
   }
 
@@ -60,8 +60,8 @@ export class SubscriptionPlansPage {
     return (await this.currentPlanLabel.textContent()) ?? "";
   }
 
-  async getPlanPrice(plan: "free" | "hobby" | "investor"): Promise<string> {
-    const locator = plan === "free" ? this.planPriceFree : plan === "hobby" ? this.planPriceHobby : this.planPriceInvestor;
+  async getPlanPrice(plan: "free" | "light" | "full"): Promise<string> {
+    const locator = plan === "free" ? this.planPriceFree : plan === "light" ? this.planPriceLight : this.planPriceFull;
     return (await locator.textContent())?.trim() ?? "";
   }
 
@@ -92,8 +92,8 @@ export class SubscriptionPlansPage {
 
   // ── Upgrade buttons ────────────────────────────────────────────────────────
 
-  async isUpgradeBtnVisible(plan: "hobby" | "investor"): Promise<boolean> {
-    const btn = plan === "hobby" ? this.upgradeBtnHobby : this.upgradeBtnInvestor;
+  async isUpgradeBtnVisible(plan: "light" | "full"): Promise<boolean> {
+    const btn = plan === "light" ? this.upgradeBtnLight : this.upgradeBtnFull;
     return btn.isVisible();
   }
 
@@ -102,8 +102,8 @@ export class SubscriptionPlansPage {
    * before the browser is redirected to Stripe. Returns the Stripe Checkout or
    * Customer Portal URL depending on the user's current plan.
    */
-  async clickUpgrade(plan: "hobby" | "investor"): Promise<string> {
-    const btn = plan === "hobby" ? this.upgradeBtnHobby : this.upgradeBtnInvestor;
+  async clickUpgrade(plan: "light" | "full"): Promise<string> {
+    const btn = plan === "light" ? this.upgradeBtnLight : this.upgradeBtnFull;
 
     let resolveUrl!: (url: string) => void;
     const urlPromise = new Promise<string>((resolve) => {
@@ -178,10 +178,10 @@ export class SubscriptionPlansPage {
   }
 
   async hasAnyUpgradeOption(): Promise<boolean> {
-    const [hobbyVisible, investorVisible] = await Promise.all([
-      this.upgradeBtnHobby.isVisible(),
-      this.upgradeBtnInvestor.isVisible(),
+    const [lightVisible, fullVisible] = await Promise.all([
+      this.upgradeBtnLight.isVisible(),
+      this.upgradeBtnFull.isVisible(),
     ]);
-    return hobbyVisible || investorVisible;
+    return lightVisible || fullVisible;
   }
 }

@@ -1,6 +1,6 @@
 // Subscription domain types
 
-export type Plan = 'free' | 'hobby' | 'investor';
+export type Plan = 'free' | 'light' | 'full';
 
 /** Status mirrors the Stripe subscription status (plus 'inactive' for the Free plan). */
 export type SubscriptionStatus = 'active' | 'past_due' | 'canceled' | 'inactive';
@@ -8,12 +8,27 @@ export type SubscriptionStatus = 'active' | 'past_due' | 'canceled' | 'inactive'
 /** The type of scheduled change pending at period end. */
 export type ChangeType = 'downgrade' | 'cancel';
 
-/** Ascending rank: free (0) < hobby (1) < investor (2). */
+/** Ascending rank: free (0) < light (1) < full (2). */
 export const PLAN_RANK: Record<Plan, number> = {
   free: 0,
-  hobby: 1,
-  investor: 2,
+  light: 1,
+  full: 2,
 };
+
+export function normalizePlan(plan: string): Plan {
+  switch (plan) {
+    case 'free':
+    case 'light':
+    case 'full':
+      return plan;
+    case 'hobby':
+      return 'light';
+    case 'investor':
+      return 'full';
+    default:
+      throw new Error(`Unknown subscription plan: ${plan}`);
+  }
+}
 
 export interface SubscriptionScheduledChange {
   id: string;

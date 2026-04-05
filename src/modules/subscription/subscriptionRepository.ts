@@ -18,6 +18,7 @@ import type {
   CreateSubscriptionInput,
   Plan,
 } from './subscriptionTypes';
+import { normalizePlan } from './subscriptionTypes';
 
 // ─── Mapping ─────────────────────────────────────────────────────────────────
 
@@ -28,7 +29,7 @@ function mapScheduledChange(
     id: record.id,
     subscriptionId: record.subscriptionId,
     changeType: record.changeType as ChangeType,
-    targetPlan: record.targetPlan as Plan,
+    targetPlan: normalizePlan(record.targetPlan),
     effectiveAt: record.effectiveAt,
     version: record.version,
     createdAt: record.createdAt,
@@ -46,7 +47,7 @@ function mapToDomain(
     profileId: record.profileId,
     stripeCustomerId: record.stripeCustomerId,
     stripeSubscriptionId: record.stripeSubscriptionId,
-    plan: record.plan as Plan,
+    plan: normalizePlan(record.plan),
     status: record.status as SubscriptionStatus,
     currentPeriodStart: record.currentPeriodStart,
     currentPeriodEnd: record.currentPeriodEnd,

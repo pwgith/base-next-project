@@ -9,7 +9,7 @@
 | **Priority**     | Medium                         |
 | **Status**       | Draft                          |
 | **Created**      | 2026-03-06                     |
-| **Last Updated** | 2026-03-06                     |
+| **Last Updated** | 2026-04-04                     |
 
 ## Summary
 
@@ -18,7 +18,7 @@ A signed-in user on a paid plan requests a downgrade to a lower subscription tie
 ## Preconditions
 
 - The user is signed in with an active session (see [UC-USR-004 Login](./login.md)).
-- The user is currently on a paid plan (Hobby or Investor).
+- The user is currently on a paid plan (Light or Full).
 - The target plan is lower than the user's current plan.
 - The user has viewed the subscription plans page (see [UC-USR-011 View Subscription Plans](./viewSubscriptionPlans.md)).
 
@@ -93,7 +93,7 @@ The user selects the "Manage Billing" action from the subscription plans page, w
 
 ## UI Reference
 
-None at this time.
+See `design/ui/subscriptionPlans.html`.
 
 ## Features
 
