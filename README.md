@@ -1,5 +1,32 @@
 # model
 
+## Quick start
+
+1. Create `.env.local` from [.env.example](.env.example) and fill in the required Supabase, Stripe, and Mailsac values.
+2. Install dependencies:
+
+```powershell
+npm install
+```
+
+3. Start the app:
+
+```powershell
+npm run dev
+```
+
+4. In a separate terminal, start the Stripe webhook listener:
+
+```powershell
+npm run stripe-cli
+```
+
+5. Run the BDD tests feature-by-feature or by tag with `npx`:
+
+```powershell
+npx tsx ./node_modules/@cucumber/cucumber/bin/cucumber-js --tags "@F-010" --format progress --format json:cucumber-results.json
+```
+
 ## Local setup
 
 Create a `.env.local` file in the repository root and add the variables described below.
